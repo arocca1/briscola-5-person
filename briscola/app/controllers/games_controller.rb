@@ -1,3 +1,5 @@
+require 'game_state'
+
 class GamesController < ApplicationController
   def index
   end

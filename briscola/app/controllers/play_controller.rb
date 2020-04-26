@@ -1,3 +1,5 @@
+require 'briscola_hand_winner_computer'
+
 class PlayController < ApplicationController
   def deal_cards
     active_game = ActiveGame.find_by(id: params[:game_id])
@@ -39,6 +41,8 @@ class PlayController < ApplicationController
     if active_game.player_game_cards.where.not(hand_id: nil) == active_game.game.cards_in_deck.count
       return render json: "All of the cards have already been played"
     end
+
+    return render json: "You can't play yet. It's not your turn" if active_game.current_player_turn != player.id
 
     curr_hand = active_game.current_hand
     num_cards_in_current_hand = curr_hand.player_game_cards.count

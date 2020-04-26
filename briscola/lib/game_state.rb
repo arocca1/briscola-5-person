@@ -1,6 +1,6 @@
 module GameState
   def self.get_player_state(player:, active_game:, show_score: false)
-    state = { id: player.id }
+    state = { id: player.id, game_id: active_game.id }
     state[:my_cards] = player.unplayed_cards.map do |pl_card|
       {
         id: pl_card.id.to_s,
@@ -29,16 +29,10 @@ module GameState
       raw_value: pl_card.card.raw_value,
     }
 
-# TODO calculate player currently winning hand
+    winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.brisola_suit)
+    state[:current_leader] = winning_card.player_id
 
-
-
-
-# TODO define ordering of play and the dealer
-# dealer is the first to join
-# winner of hand must go first
-# can define ordering by who joined the game first (player_game_cards have timestamps)
-
+    state[:current_player_turn] = active_game.current_player_turn
 
     if active_game.game.requires_bidding
       state[:requires_bidding] = active_game.game.requires_bidding
