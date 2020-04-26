@@ -8,8 +8,9 @@ def BidsController < ApplicationController
     return render json: "Player does not exist" if player.nil?
     player_in_game = active_game.player_active_game_bids.where(player_id: player.id)
     return render json: "Player not in game", status: 400 if player_in_game.nil?
-    player_in_game.bid = params[:bid].to_i
-    return render json: "Unable to make bid", status: 400 if !player_in_game.save
+    bid = params[:bid].to_i
+    return render json: "Bid must be between 61 and 120", status: 400 if bid < 61 || bid > 120
+    return render json: "Unable to make bid", status: 400 if !player_in_game.update(bid: bid)
     render json: "Bid made", status: 200
   end
 
