@@ -6,4 +6,8 @@ class Player < ApplicationRecord
   def partners(active_game_id)
     self.active_game_partners.where(active_game_partners: { active_game_id: active_game_id })
   end
+
+  def unplayed_cards(active_game_id)
+    player_game_cards.includes(:card).where(active_game_id: active_game_id, hand_id: nil)
+  end
 end
