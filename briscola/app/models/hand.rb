@@ -8,6 +8,7 @@
 #  updated_at     :datetime         not null
 #  active_game_id :bigint
 #  winner_id      :bigint
+#  number         :integer
 #
 class Hand < ApplicationRecord
   belongs_to :active_game, inverse_of: :hands

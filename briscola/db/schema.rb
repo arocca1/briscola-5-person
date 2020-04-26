@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_26_150500) do
+ActiveRecord::Schema.define(version: 2020_04_26_174322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2020_04_26_150500) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "game_id"
+    t.boolean "bidding_done"
     t.index ["game_id"], name: "index_active_games_on_game_id"
   end
 
@@ -68,6 +69,7 @@ ActiveRecord::Schema.define(version: 2020_04_26_150500) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "active_game_id"
     t.bigint "winner_id"
+    t.integer "number"
     t.index ["active_game_id"], name: "index_hands_on_active_game_id"
     t.index ["winner_id"], name: "index_hands_on_winner_id"
   end
