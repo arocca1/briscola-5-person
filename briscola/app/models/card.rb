@@ -1,6 +1,7 @@
 class Card < ApplicationRecord
   belongs_to :suit, inverse_of: :cards
   has_many :game_value_points, inverse_of: :card
+  has_many :player_game_cards, inverse_of: :card
 
   # assume they have the same suit
   def self.get_winner(a, b, brisola_suit)

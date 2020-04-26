@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_26_000010) do
+ActiveRecord::Schema.define(version: 2020_04_26_121729) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_games", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "game_id"
+    t.index ["game_id"], name: "index_active_games_on_game_id"
+  end
 
   create_table "card_types", force: :cascade do |t|
     t.string "name", null: false
@@ -41,15 +49,50 @@ ActiveRecord::Schema.define(version: 2020_04_26_000010) do
     t.index ["card_type_id"], name: "index_games_on_card_type_id"
   end
 
+  create_table "player_active_game_bids", force: :cascade do |t|
+    t.integer "bid", null: false
+    t.boolean "passed", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "active_game_id"
+    t.bigint "player_id"
+    t.index ["active_game_id"], name: "index_player_active_game_bids_on_active_game_id"
+    t.index ["player_id"], name: "index_player_active_game_bids_on_player_id"
+  end
+
+  create_table "player_game_cards", force: :cascade do |t|
+    t.boolean "played", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "active_game_id"
+    t.bigint "player_id"
+    t.bigint "card_id"
+    t.index ["active_game_id"], name: "index_player_game_cards_on_active_game_id"
+    t.index ["card_id"], name: "index_player_game_cards_on_card_id"
+    t.index ["player_id"], name: "index_player_game_cards_on_player_id"
+  end
+
+  create_table "players", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "suits", force: :cascade do |t|
     t.string "name", null: false
     t.bigint "card_type_id"
     t.index ["card_type_id"], name: "index_suits_on_card_type_id"
   end
 
+  add_foreign_key "active_games", "games"
   add_foreign_key "cards", "suits"
   add_foreign_key "game_value_points", "cards"
   add_foreign_key "game_value_points", "games"
   add_foreign_key "games", "card_types"
+  add_foreign_key "player_active_game_bids", "active_games"
+  add_foreign_key "player_active_game_bids", "players"
+  add_foreign_key "player_game_cards", "active_games"
+  add_foreign_key "player_game_cards", "cards"
+  add_foreign_key "player_game_cards", "players"
   add_foreign_key "suits", "card_types"
 end
