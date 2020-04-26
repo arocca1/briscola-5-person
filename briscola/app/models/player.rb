@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: players
+#
+#  id         :bigint           not null, primary key
+#  name       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
 class Player < ApplicationRecord
   has_many :player_game_cards, inverse_of: :player
   has_many :player_active_game_bids, inverse_of: :player
