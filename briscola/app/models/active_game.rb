@@ -16,7 +16,15 @@ class ActiveGame < ApplicationRecord
   has_many :active_game_partners, inverse_of: :active_game
   has_many :hands, inverse_of: :active_game
 
+  def current_hand
+    self.hands.where("hands.number = (#{self.hands.select('MAX(number)').to_sql})")
+  end
+
   def cards_in_current_hand
     self.player_game_cards.includes(:card).joins(:hand).where("hands.number = (#{self.hands.select('MAX(number)').to_sql})")
+  end
+
+  def players_in_game
+    Player.joins(:player_active_game_bids).where(player_active_game_bids: { active_game_id: self.id })
   end
 end
