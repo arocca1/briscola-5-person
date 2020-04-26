@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_26_174322) do
+ActiveRecord::Schema.define(version: 2020_04_26_191549) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(version: 2020_04_26_174322) do
     t.bigint "player_id"
     t.bigint "card_id"
     t.bigint "hand_id"
+    t.boolean "is_partner_card"
     t.index ["active_game_id"], name: "index_player_game_cards_on_active_game_id"
     t.index ["card_id"], name: "index_player_game_cards_on_card_id"
     t.index ["hand_id"], name: "index_player_game_cards_on_hand_id"

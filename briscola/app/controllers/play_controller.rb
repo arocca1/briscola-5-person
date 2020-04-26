@@ -55,12 +55,17 @@ class PlayController < ApplicationController
     # the current hand still have more cards to be played
     # TODO wrap in transaction
     return render json: "Unable to play card", status: 400 if !player_game_card.update(hand_id: curr_hand.id)
-    # did playing this card finish the hand?
-    # if it didn't finish the game, let's create the next hand
-    if (num_cards_in_current_hand + 1) == active_game.game.num_players &&
-      active_game.player_game_cards.where.not(hand_id: nil) != active_game.game.cards_in_deck.count
-      hand = active_game.hands.create(number: curr_hand.number + 1)
-      return render json: "Unable to create next hand", status: 400 if hand.nil?
+    # did playing this card finish the hand? we need to compute the score
+    if (num_cards_in_current_hand + 1) == active_game.game.num_players
+      winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.brisola_suit)
+      # update the hand with the score and winner
+      return render json: "Unable to calculate score" if !curr_hand.update(winner_id: winning_card.player_id, score: score)
+
+      # if it didn't finish the game, let's create the next hand
+      if active_game.player_game_cards.where.not(hand_id: nil) != active_game.game.cards_in_deck.count
+        hand = active_game.hands.create(number: curr_hand.number + 1)
+        return render json: "Unable to create next hand", status: 400 if hand.nil?
+      end
     end
 
     render json: "Played card", status: 200

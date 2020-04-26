@@ -27,4 +27,12 @@ class ActiveGame < ApplicationRecord
   def players_in_game
     Player.joins(:player_active_game_bids).where(player_active_game_bids: { active_game_id: self.id })
   end
+
+  def brisola_suit
+    self.player_game_cards.where(player_game_cards: { is_partner_card: true }).joins(:card).pluck('cards.id').first
+  end
+
+  def partner_card
+    self.player_game_cards.find_by(player_game_cards: { is_partner_card: true })
+  end
 end
