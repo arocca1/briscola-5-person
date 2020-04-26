@@ -10,6 +10,14 @@ module GameState
       }
     end
 
+    # so we can draw them around the table
+    state[:players] = active_game.ordered_players_in_game.map do |pl|
+      {
+        id: pl.id,
+        name: pl.name,
+      }
+    end
+
     cards_in_current_hand = active_game.cards_in_current_hand.order(:updated_at)
     # ordering of card playing matters
     # updated_at will be set when we set the hand_id

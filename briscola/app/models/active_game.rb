@@ -32,6 +32,10 @@ class ActiveGame < ApplicationRecord
     Player.joins(:player_active_game_bids).where(player_active_game_bids: { active_game_id: self.id })
   end
 
+  def ordered_players_in_game
+    Player.joins(:player_active_game_bids).where(player_active_game_bids: { active_game_id: self.id }).order(PlayerActiveGameBid.arel_table[:created_at])
+  end
+
   def brisola_suit
     self.player_game_cards.where(player_game_cards: { is_partner_card: true }).joins(:card).pluck('cards.id').first
   end
@@ -41,7 +45,7 @@ class ActiveGame < ApplicationRecord
   end
 
   def current_player_turn
-    player_ids = self.player_active_game_bids.order(:created_at).pluck(:player_id)
+    player_ids = self.ordered_players_in_game.pluck(:id)
 
     curr_hand = self.current_hand
     cards_played_in_current_hand = self.cards_in_current_hand.count
