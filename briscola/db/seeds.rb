@@ -8,9 +8,9 @@
 
 italian_card_type = CardType.new(name: 'Italian')
 italian_card_type.save!
-briscola = italian_card_type.games.new(name: 'Briscola')
+briscola = italian_card_type.games.new(name: 'Briscola', num_players: 2)
 briscola.save!
-briscola_chiamata = italian_card_type.games.new(name: 'Briscola Chiamata (5-man)')
+briscola_chiamata = italian_card_type.games.new(name: 'Briscola Chiamata (5-man)', num_players: 5)
 briscola_chiamata.save!
 
 ["Oro", "Bastone", "Spada", "Coppa"].each do |suit_name|

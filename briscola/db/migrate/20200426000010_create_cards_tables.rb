@@ -5,6 +5,7 @@ class CreateCardsTables < ActiveRecord::Migration[6.0]
     end
     create_table :games do |t|
       t.string :name, null: false
+      t.integer :num_players, null: false
     end
     add_reference :games, :card_type, foreign_key: true
     create_table :suits do |t|
