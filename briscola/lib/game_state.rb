@@ -11,6 +11,8 @@ module GameState
       cards_played_in_hand: [
         { value, raw_value, suit, by_who }
       ],
+      requires_bidding: ,
+      bidding_done: ,
       highest_bid: ,
       highest_bidder ,
       my_team_score: , # only show if allowed to
@@ -28,7 +30,9 @@ module GameState
 
     # TODO figure out how to identify active hand
 
-    if active_game.requires_bidding
+    if active_game.game.requires_bidding
+      state[:requires_bidding] = active_game.game.requires_bidding
+      state[:bidding_done] = active_game.bidding_done
       player_bid = active_game.player_active_game_bids.select(:player_id, :bid).where("bid = (#{active_game.player_active_game_bids.select('MAX(bid)').to_sql})")
       state[:highest_bid] = player_bid.bid
       state[:highest_bidder] = player_bid.player_id.to_s # JavaScript is a butt
