@@ -20,8 +20,8 @@ class CreateActiveGameTables < ActiveRecord::Migration[6.0]
     add_reference :player_game_cards, :card, foreign_key: true
 
     create_table :player_active_game_bids do |t|
-      t.integer :bid, null: false
-      t.boolean :passed, default: false
+      t.integer :bid
+      t.boolean :passed
       t.timestamps
     end
     add_reference :player_active_game_bids, :active_game, foreign_key: true

@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(version: 2020_04_26_121729) do
   end
 
   create_table "player_active_game_bids", force: :cascade do |t|
-    t.integer "bid", null: false
-    t.boolean "passed", default: false
+    t.integer "bid"
+    t.boolean "passed"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "active_game_id"
