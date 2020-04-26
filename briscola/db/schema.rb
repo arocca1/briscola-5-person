@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_26_141057) do
+ActiveRecord::Schema.define(version: 2020_04_26_144646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,16 @@ ActiveRecord::Schema.define(version: 2020_04_26_141057) do
     t.index ["card_type_id"], name: "index_games_on_card_type_id"
   end
 
+  create_table "hands", force: :cascade do |t|
+    t.integer "score"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "active_game_id"
+    t.bigint "winner_id"
+    t.index ["active_game_id"], name: "index_hands_on_active_game_id"
+    t.index ["winner_id"], name: "index_hands_on_winner_id"
+  end
+
   create_table "player_active_game_bids", force: :cascade do |t|
     t.integer "bid"
     t.boolean "passed"
@@ -73,14 +83,15 @@ ActiveRecord::Schema.define(version: 2020_04_26_141057) do
   end
 
   create_table "player_game_cards", force: :cascade do |t|
-    t.boolean "played", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "active_game_id"
     t.bigint "player_id"
     t.bigint "card_id"
+    t.bigint "hand_id"
     t.index ["active_game_id"], name: "index_player_game_cards_on_active_game_id"
     t.index ["card_id"], name: "index_player_game_cards_on_card_id"
+    t.index ["hand_id"], name: "index_player_game_cards_on_hand_id"
     t.index ["player_id"], name: "index_player_game_cards_on_player_id"
   end
 
@@ -104,10 +115,13 @@ ActiveRecord::Schema.define(version: 2020_04_26_141057) do
   add_foreign_key "game_value_points", "cards"
   add_foreign_key "game_value_points", "games"
   add_foreign_key "games", "card_types"
+  add_foreign_key "hands", "active_games"
+  add_foreign_key "hands", "players", column: "winner_id"
   add_foreign_key "player_active_game_bids", "active_games"
   add_foreign_key "player_active_game_bids", "players"
   add_foreign_key "player_game_cards", "active_games"
   add_foreign_key "player_game_cards", "cards"
+  add_foreign_key "player_game_cards", "hands"
   add_foreign_key "player_game_cards", "players"
   add_foreign_key "suits", "card_types"
 end
