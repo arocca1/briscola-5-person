@@ -33,9 +33,13 @@ class GamesController < ApplicationController
     render json: url_for(controller: 'games', action: 'show', id: active_game.id).html_safe, status: 200
   end
 
+  def show
+    @active_game_id = params[:id].to_s
+  end
+
   # show the game status
   # this should be hit every few seconds to update the state seen by each player
-  def show
+  def show_json
     player = Player.find_by(id: params[:player_id])
     return render json: "Invalid player", status: 400 if player.nil?
     active_game = ActiveGame.find_by(id: params[:game_id])
@@ -43,6 +47,6 @@ class GamesController < ApplicationController
       return render json: "Invalid game", status: 400
     end
     show_score = params[:show_score] == "true" || params[:show_score] == true
-    return render json: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score), status: 200
+    return render json: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score).to_json, status: 200
   end
 end

@@ -9,6 +9,10 @@
   </head>
 
   <body>
+    <%= content_tag :div,
+      id: "game_id_data",
+      game_id: @active_game_id do %>
+    <% end %>
     <%= javascript_pack_tag 'containers/Root', 'data-turbolinks-track': 'reload' %>
   </body>
 </html>

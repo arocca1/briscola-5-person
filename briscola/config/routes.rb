@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
   resources :games, only: [:create, :index, :show] do
     collection do
+      get 'show_json'
       post 'join'
     end
   end
+
   resources :bids do
     collection do
       post 'make_bid'
@@ -11,6 +13,7 @@ Rails.application.routes.draw do
       post 'set_partner_card'
     end
   end
+
   resources :play do
     collection do
       post 'deal_cards'
