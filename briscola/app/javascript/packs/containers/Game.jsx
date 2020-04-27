@@ -25,6 +25,9 @@ const Game = props => {
 
 Game.PropTypes = {
   gameId: PropTypes.number,
+  inGame: PropTypes.bool.isRequired,
+  loadingInProgressGame: PropTypes.bool.isRequired,
+  playerId: PropTypes.number,
 }
 
 Game.defaultProps = {
@@ -34,13 +37,15 @@ Game.defaultProps = {
 
 const mapStateToProps = (state, ownProps) => {
   const { activeGameReducer } = state
-  const { loadingInProgressGame, gameId, inGame } = activeGameReducer || {
+  const { loadingInProgressGame, gameId, playerId, inGame } = activeGameReducer || {
     loadingInProgressGame: false,
     gameId: undefined,
+    playerId: undefined,
     inGame: false,
   }
   return {
     gameId: ownProps.gameId || gameId, // or that returned from the game state
+    playerId,
     loadingInProgressGame,
     inGame,
   }
