@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     collection do
       get 'show_json'
       post 'join'
+      get 'get_supported_games'
     end
   end
 

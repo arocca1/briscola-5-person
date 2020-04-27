@@ -1,23 +1,48 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import GameCreate from '../components/GameCreate'
+import Spinner from 'react-bootstrap/Spinner'
 
 const Game = props => {
-/*  if (!props.game_id) {
-    <GameStart />
-  }*/
-  return <div>Hello   fffffff {props.game_id}!</div>;
+  if (props.loadingInProgressGame) {
+    return <Spinner animation="border" />;
+  }
+
+  if (props.gameId) {
+    // in an active game
+    if (props.inGame) {
+      // // TODO
+      return <div>In game {props.gameId}</div>;
+    }
+    // need to join a game
+    return <div>Need to join game {props.gameId}</div>;
+  }
+
+  // want to start a game
+  return <GameCreate />;
 }
 
 Game.PropTypes = {
-  game_id: PropTypes.number,
+  gameId: PropTypes.number,
 }
 
-Game.defaultProps = {}
+Game.defaultProps = {
+  inGame: false,
+  loadingInProgressGame: false,
+}
 
-function mapStateToProps(state, ownProps) {
+const mapStateToProps = (state, ownProps) => {
+  const { activeGameReducer } = state
+  const { loadingInProgressGame, gameId, inGame } = activeGameReducer || {
+    loadingInProgressGame: false,
+    gameId: undefined,
+    inGame: false,
+  }
   return {
-    game_id: ownProps.game_id, // or that returned from the game state
+    gameId: ownProps.gameId || gameId, // or that returned from the game state
+    loadingInProgressGame,
+    inGame,
   }
 }
 

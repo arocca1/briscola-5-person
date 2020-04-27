@@ -14,8 +14,8 @@ class GamesController < ApplicationController
       return render json: "Unable to join game because it's already full", status: 400
     end
     player = Player.find_or_create_by(name: params[:player_name])
-    player_in_game = active_game.player_active_game_bids.new(player_id: player.id)
-    return render json: "Unable to join active game", status: 400 if !player_in_game.save
+    player_in_game = active_game.player_active_game_bids.find_or_create_by(player_id: player.id)
+    return render json: "Unable to join active game", status: 400 if player_in_game.nil?
     render json: "Joining game", status: 200
   end
 
@@ -29,8 +29,8 @@ class GamesController < ApplicationController
     active_game = game.active_games.new(name: params[:active_game_name])
     return render json: "Unable to start game", status: 400 if !active_game.save
     player_in_game = active_game.player_active_game_bids.new(player_id: player.id)
-    return render json: "Unable to join game", status: 400 if !player_in_game.save
-    render json: url_for(controller: 'games', action: 'show', id: active_game.id).html_safe, status: 200
+    return render json: "Unable to enter game", status: 400 if !player_in_game.save
+    render json: { game_id: active_game.id, player_id: player.id }, status: 200
   end
 
   def show
@@ -47,6 +47,10 @@ class GamesController < ApplicationController
       return render json: "Invalid game", status: 400
     end
     show_score = params[:show_score] == "true" || params[:show_score] == true
-    return render json: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score).to_json, status: 200
+    return render json: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score), status: 200
+  end
+
+  def get_supported_games
+    render json: Game.all.map { |g| { id: g.id.to_s, name: g.name } }, status: 200
   end
 end

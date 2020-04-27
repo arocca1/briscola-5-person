@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let component = <Game />;
   if (node) {
     const data = node.getAttribute('game_id');
-    component = <Game game_id={data}/>;
+    component = <Game gameId={data}/>;
   }
 
   ReactDOM.render(
