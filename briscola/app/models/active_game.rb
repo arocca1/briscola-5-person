@@ -44,18 +44,20 @@ class ActiveGame < ApplicationRecord
     self.player_game_cards.find_by(player_game_cards: { is_partner_card: true })
   end
 
+  def max_bidder
+    self.player_active_game_bids.find_by("bid = (#{self.player_active_game_bids.select('MAX(bid)').to_sql})")
+  end
+
   def current_player_turn
     player_ids = self.ordered_players_in_game.pluck(:id)
 
     curr_hand = self.current_hand
     cards_played_in_current_hand = self.cards_in_current_hand.count
-    # if this is the very first hand, i.e. no cards have been played, let's
-    # choose the second person to join as it being their turn, i.e. the person
-    # who started the game goes last
+    # if this is the very first hand, the max bidder goes first
     # if some number of cards have been played, we are displaced from that
     # many positions from the second person to join
-    prev_winner_id = self.previous_hand.pluck(:winner_id).first
-    prev_winner_idx = curr_hand.number == 1 ? 0 : player_ids.index(prev_winner_id)
+    prev_winner_id = curr_hand.number == 1 ? self.max_bidder.pluck(:player_id).first : self.previous_hand.pluck(:winner_id).first
+    prev_winner_idx = player_ids.index(prev_winner_id)
     player_ids[(prev_winner_idx + 1 + cards_played_in_current_hand) % self.game.num_players]
   end
 end

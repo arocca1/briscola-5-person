@@ -1,3 +1,5 @@
+require 'game_state'
+
 def BidsController < ApplicationController
   def make_bid
     active_game = ActiveGame.find_by(id: params[:game_id])
@@ -11,7 +13,7 @@ def BidsController < ApplicationController
     bid = params[:bid].to_i
     return render json: "Bid must be between 61 and 120", status: 400 if bid < 61 || bid > 120
     return render json: "Unable to make bid", status: 400 if !player_in_game.update(bid: bid)
-    render json: "Bid made", status: 200
+    render json: { game_state: GameState.get_player_state(player: player, active_game: active_game) }, status: 200
   end
 
   def pass_bid
@@ -31,7 +33,7 @@ def BidsController < ApplicationController
       return render json: "Unable to complete bidding", status: 400 if !active_game.update(bidding_done: true)
     end
 
-    render json: "Pass complete", status: 200
+    render json: { game_state: GameState.get_player_state(player: player, active_game: active_game) }, status: 200
   end
 
   def set_partner_card
@@ -60,6 +62,6 @@ def BidsController < ApplicationController
         active_game.active_game_partners.create!(player_id: p.id, partner_id: other_p.id)
       end
     end
-    render json: "Created partners", status: 200
+    render json: { game_state: GameState.get_player_state(player: player, active_game: active_game) }, status: 200
   end
 end

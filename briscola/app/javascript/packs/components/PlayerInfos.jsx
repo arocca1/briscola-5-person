@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Group, Text } from 'react-konva'
 
-const PlayerInfo = props => {
+const PlayerName = props => {
   // me
   let x = props.windowWidth / 2;
   let y = props.windowHeight - props.windowHeight / 20;
@@ -22,18 +22,61 @@ const PlayerInfo = props => {
   return <Text x={x} y={y} text={props.name} />;
 }
 
+PlayerName.PropTypes = {
+  windowWidth: PropTypes.number.isRequired,
+  windowHeight: PropTypes.number.isRequired,
+  relativeToMe: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+}
+
+const PlayerBid = props => {
+
+}
+
+PlayerBid.PropTypes = {
+  windowWidth: PropTypes.number.isRequired,
+  windowHeight: PropTypes.number.isRequired,
+  relativeToMe: PropTypes.number.isRequired,
+  handleMakeBid: PropTypes.func.isRequired,
+  handlePassBid: PropTypes.func.isRequired,
+  handleSetPartnerCard: PropTypes.func.isRequired,
+}
+
+const PlayerInfo = props => {
+  return (
+    <Group>
+      <PlayerName
+        windowWidth={props.windowWidth}
+        windowHeight={props.windowHeight}
+        relativeToMe={props.relativeToMe}
+        name={player.name}
+      />
+      <PlayerBid
+        windowWidth={props.windowWidth}
+        windowHeight={props.windowHeight}
+        relativeToMe={props.relativeToMe}
+        handleMakeBid={props.handleMakeBid}
+        handlePassBid={props.handlePassBid}
+        handleSetPartnerCard={props.handleSetPartnerCard}
+      />
+    </Group>
+  )
+}
+
 PlayerInfo.PropTypes = {
   windowWidth: PropTypes.number.isRequired,
   windowHeight: PropTypes.number.isRequired,
   relativeToMe: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-  // will be used in the future to handle more games
-  numPlayers: PropTypes.number.isRequired,
+  gameState: PropTypes.shape.isRequired,
+  handleMakeBid: PropTypes.func.isRequired,
+  handlePassBid: PropTypes.func.isRequired,
+  handleSetPartnerCard: PropTypes.func.isRequired,
 }
 
 const PlayerInfos = props => {
-  const players = [...Array(props.numPlayers)].map((_, i) => {
-    const player = props.players[(props.myPosition + i) % props.numPlayers];
+  const players = [...Array(props.gameState.num_players)].map((_, i) => {
+    const player = props.gameState.players[(props.gameState.my_position + i) % props.gameState.num_players];
     if (player) {
       return (
         <PlayerInfo
@@ -42,7 +85,10 @@ const PlayerInfos = props => {
           windowHeight={props.windowHeight}
           relativeToMe={i}
           name={player.name}
-          numPlayers={props.numPlayers}
+          gameState={props.gameState}
+          handleMakeBid={props.handleMakeBid}
+          handlePassBid={props.handlePassBid}
+          handleSetPartnerCard={props.handleSetPartnerCard}
         />
       );
     }
@@ -57,10 +103,10 @@ const PlayerInfos = props => {
 PlayerInfos.PropTypes = {
   windowWidth: PropTypes.number.isRequired,
   windowHeight: PropTypes.number.isRequired,
-  playerId: PropTypes.string.isRequired,
-  myPosition: PropTypes.number.isRequired,
-  players: PropTypes.shape.isRequired,
-  numPlayers: PropTypes.number.isRequired,
+  gameState: PropTypes.shape.isRequired,
+  handleMakeBid: PropTypes.func.isRequired,
+  handlePassBid: PropTypes.func.isRequired,
+  handleSetPartnerCard: PropTypes.func.isRequired,
 };
 
 export default PlayerInfos

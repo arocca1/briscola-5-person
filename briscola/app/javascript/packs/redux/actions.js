@@ -11,11 +11,14 @@ export const JOIN_GAME = "JOIN_GAME";
 export const COMPLETED_JOIN_GAME = "COMPLETED_JOIN_GAME"
 export const FETCH_GAME_STATE = "FETCH_GAME_STATE";
 export const COMPLETED_FETCH_GAME_STATE = "COMPLETED_FETCH_GAME_STATE";
-
-export const GET_GAME_STATE = "GET_GAME_STATE";
 export const MAKE_BID = "MAKE_BID";
+export const COMPLETED_MAKE_BID = "COMPLETED_MAKE_BID";
 export const PASS_BID = "PASS_BID";
+export const COMPLETED_PASS_BID = "COMPLETED_PASS_BID";
 export const SET_PARTNER_CARD = "SET_PARTNER_CARD";
+export const COMPLETED_SET_PARTNER_CARD = "COMPLETED_SET_PARTNER_CARD";
+
+
 export const DEAL_CARDS = "DEAL_CARDS";
 export const PLAY_CARD = "PLAY_CARD";
 
@@ -155,5 +158,114 @@ export function doFetchGameState(gameId, playerId) {
     })
     .then(response => response.data)
     .then(json => dispatch(completeFetchGameState(json)))
+  }
+}
+
+function makeBid(bid) {
+  return {
+    type: MAKE_BID,
+    bid: bid,
+  }
+}
+
+function completeMakeBid(json) {
+  return {
+    type: COMPLETED_MAKE_BID,
+    gameState: json.game_state,
+  }
+}
+
+export function doMakeBid(gameId, playerId, bid) {
+  return dispatch => {
+    dispatch(makeBid(bid))
+    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    axios({
+      method: 'post',
+      url: '/bids/make_bid',
+      baseURL: baseUrl(),
+      data: {
+        game_id: gameId,
+        player_name: playerId,
+        bid: bid,
+      },
+      headers: {
+        'X-CSRF-Token': csrf,
+      },
+    })
+    .then(response => response.data)
+    .then(json => dispatch(completeMakeBid(json)))
+  }
+}
+
+function passBid() {
+  return {
+    type: PASS_BID,
+    passed: true,
+  }
+}
+
+function completePassBid(json) {
+  return {
+    type: COMPLETED_PASS_BID,
+    gameState: json.game_state,
+  }
+}
+
+export function doPassBid(gameId, playerId) {
+  return dispatch => {
+    dispatch(passBid())
+    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    axios({
+      method: 'post',
+      url: '/bids/pass_bid',
+      baseURL: baseUrl(),
+      data: {
+        game_id: gameId,
+        player_name: playerId,
+      },
+      headers: {
+        'X-CSRF-Token': csrf,
+      },
+    })
+    .then(response => response.data)
+    .then(json => dispatch(completePassBid(json)))
+  }
+}
+
+function setPartnerCard() {
+  return {
+    type: SET_PARTNER_CARD,
+    suitId,
+    rawValue,
+  }
+}
+
+function completeSetPartnerCard(json) {
+  return {
+    type: COMPLETED_SET_PARTNER_CARD,
+    gameState: json.game_state,
+  }
+}
+
+export function doSetPartnerCard(gameId, playerId, suitId, rawValue) {
+  return dispatch => {
+    dispatch(passBid(suitId, rawValue))
+    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    axios({
+      method: 'post',
+      url: '/bids/pass_bid',
+      baseURL: baseUrl(),
+      data: {
+        game_id: gameId,
+        player_name: playerId,
+        suit_id: suitId,
+        raw_value: rawValue,
+      },
+      headers: {
+        'X-CSRF-Token': csrf,
+      },
+    })
+    .then(response => response.data)
+    .then(json => dispatch(completeSetPartnerCard(json)))
   }
 }

@@ -47,7 +47,7 @@ class GamesController < ApplicationController
       return render json: "Invalid game", status: 400
     end
     show_score = params[:show_score] == "true" || params[:show_score] == true
-    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
+    render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
   end
 
   def get_supported_games

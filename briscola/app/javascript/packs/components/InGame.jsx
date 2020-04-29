@@ -4,7 +4,12 @@ import { connect } from 'react-redux'
 import { Stage, Layer, Rect, Image, Text } from 'react-konva'
 import PlayerInfos from './PlayerInfos'
 
-import { doFetchGameState } from '../redux/actions'
+import {
+  doFetchGameState,
+  doMakeBid,
+  doPassBid,
+  doSetPartnerCard,
+} from '../redux/actions'
 
 const TableRect = props => {
   const xBorderSize = props.windowWidth / 8;
@@ -38,24 +43,32 @@ class InGame extends React.Component {
   render() {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
+    let text;
+    if (!this.props.gameState.all_players_joined) {
+      text = 'Waiting for more players to join...';
+    } else if (this.props.gameState.requires_bidding && !this.props.gameState.bidding_done) {
+      text = "Let's do some bidding!";
+    }
+    let message;
+    if (text) {
+      message = <Text key='MainMessage' x={windowWidth / 4} y={windowHeight / 2} text={text} />;
+    }
     return (
       <div key="InPageDiv">
         <Stage width={windowWidth} height={windowHeight}>
           <Layer key="TableLayer">
             <TableRect windowWidth={windowWidth} windowHeight={windowHeight} />
-            {this.props.gameState.all_players_joined ? null : <Text x={windowWidth / 4} y={windowHeight / 2} text="Waiting for more players to join..." />}
+            { message }
           </Layer>
           <Layer key="PlayerLayer">
             <PlayerInfos
               windowWidth={windowWidth}
               windowHeight={windowHeight}
-              playerId={this.props.playerId}
-              myPosition={this.props.gameState.my_position}
-              players={this.props.gameState.players}
-              numPlayers={this.props.gameState.num_players}
+              gameState={this.props.gameState}
+              handleMakeBid={this.props.handleMakeBid}
+              handlePassBid={this.props.handlePassBid}
+              handleSetPartnerCard={this.props.handleSetPartnerCard}
             />
-          </Layer>
-          <Layer key="BiddingLayer">
           </Layer>
           <Layer key="ScoringLayer">
           </Layer>
@@ -82,6 +95,9 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchGameState: (gameId, playerId) => dispatch(doFetchGameState(gameId, playerId)),
+    handleMakeBid: (gameId, playerId, bid) => dispatch(doMakeBid(gameId, playerId, bid)),
+    handlePassBid: (gameId, playerId) => dispatch(doPassBid(gameId, playerId)),
+    handleSetPartnerCard: (gameId, playerId, suitId, rawValue) => dispatch(doSetPartnerCard(gameId, playerId, suitId, rawValue)),
   }
 }
 

@@ -4,6 +4,12 @@ import {
   JOIN_GAME,
   COMPLETED_JOIN_GAME,
   COMPLETED_FETCH_GAME_STATE,
+  MAKE_BID,
+  COMPLETED_MAKE_BID,
+  PASS_BID,
+  COMPLETED_PASS_BID,
+  SET_PARTNER_CARD,
+  COMPLETED_SET_PARTNER_CARD,
 } from './actions'
 
 function actOnActiveGame(state = {}, action) {
@@ -35,6 +41,25 @@ function actOnActiveGame(state = {}, action) {
     case COMPLETED_FETCH_GAME_STATE:
       return Object.assign({}, state, {
         loadingInProgressGame: false,
+        gameState: action.gameState,
+      })
+    case MAKE_BID:
+      return Object.assign({}, state, {
+        bid: action.bid,
+      })
+    case PASS_BID:
+      return Object.assign({}, state, {
+        passed: true,
+      })
+    case SET_PARTNER_CARD:
+      return Object.assign({}, state, {
+        suitId: action.suitId,
+        rawValue: action.rawValue,
+      })
+    case COMPLETED_MAKE_BID:
+    case COMPLETED_PASS_BID:
+    case COMPLETED_SET_PARTNER_CARD:
+      return Object.assign({}, state, {
         gameState: action.gameState,
       })
     default:
