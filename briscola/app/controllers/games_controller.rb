@@ -16,7 +16,7 @@ class GamesController < ApplicationController
     player = Player.find_or_create_by(name: params[:player_name])
     player_in_game = active_game.player_active_game_bids.find_or_create_by(player_id: player.id)
     return render json: "Unable to join active game", status: 400 if player_in_game.nil?
-    render json: { player_id: player.id }, status: 200
+    render json: { player_id: player.id.to_s }, status: 200
   end
 
   # create a game for others to play
@@ -30,7 +30,7 @@ class GamesController < ApplicationController
     return render json: "Unable to start game", status: 400 if !active_game.save
     player_in_game = active_game.player_active_game_bids.new(player_id: player.id)
     return render json: "Unable to enter game", status: 400 if !player_in_game.save
-    render json: { game_id: active_game.id, player_id: player.id }, status: 200
+    render json: { game_id: active_game.id.to_s, player_id: player.id.to_s }, status: 200
   end
 
   def show

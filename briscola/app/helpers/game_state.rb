@@ -19,15 +19,15 @@ module GameState
       end
     end
 
-    if in_active_play
-      # so we can draw them around the table
-      state[:players] = active_game.ordered_players_in_game.map do |pl|
-        {
-          id: pl.id.to_s,
-          name: pl.name,
-        }
-      end
+    # so we can draw them around the table
+    state[:players] = active_game.ordered_players_in_game.map do |pl|
+      {
+        id: pl.id.to_s,
+        name: pl.name,
+      }
+    end
 
+    if in_active_play
       state[:my_cards] = player.unplayed_cards(active_game.id).map do |pl_card|
         {
           id: pl_card.id.to_s,

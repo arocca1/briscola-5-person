@@ -1,4 +1,5 @@
 require 'briscola_hand_winner_computer'
+require 'game_state'
 
 class PlayController < ApplicationController
   def deal_cards
@@ -24,7 +25,7 @@ class PlayController < ApplicationController
     end
 
     return render json: "Unable to deal cards", status: 500 if !update_succeeded
-    render json: "Dealt cards", status: 200
+    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
   end
 
   def play_card
@@ -72,6 +73,6 @@ class PlayController < ApplicationController
       end
     end
 
-    render json: "Played card", status: 200
+    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
   end
 end
