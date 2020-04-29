@@ -10,8 +10,8 @@ class BriscolaHandWinnerComputer < HandWinnerComputer
   end
 
   def self.calculate_winner(cards, brisola_suit)
-    return nil if cards.empty?
-    return cards.first if cards.length == 1
+    return [nil, 0] if cards.empty?
+    return [cards.first, 0] if cards.length == 1
     winning_card = cards[1..].reduce(cards.first) { |winner, card| self.get_winner(winner, card, brisola_suit_id) }
     score = cards.reduce(0) { |sum, card| sum + card.card.game_value_points.find_by(game_id: card.active_game.game_id).points }
     [winning_card, score]

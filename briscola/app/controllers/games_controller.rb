@@ -16,7 +16,7 @@ class GamesController < ApplicationController
     player = Player.find_or_create_by(name: params[:player_name])
     player_in_game = active_game.player_active_game_bids.find_or_create_by(player_id: player.id)
     return render json: "Unable to join active game", status: 400 if player_in_game.nil?
-    render json: "Joining game", status: 200
+    render json: { player_id: player.id }, status: 200
   end
 
   # create a game for others to play
@@ -47,7 +47,7 @@ class GamesController < ApplicationController
       return render json: "Invalid game", status: 400
     end
     show_score = params[:show_score] == "true" || params[:show_score] == true
-    return render json: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score), status: 200
+    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
   end
 
   def get_supported_games

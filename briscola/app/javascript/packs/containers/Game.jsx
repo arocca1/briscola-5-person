@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import GameCreate from '../components/GameCreate'
+import GameJoin from '../components/GameJoin'
 import Spinner from 'react-bootstrap/Spinner'
 
 const Game = props => {
@@ -16,7 +17,7 @@ const Game = props => {
       return <div>In game {props.gameId}</div>;
     }
     // need to join a game
-    return <div>Need to join game {props.gameId}</div>;
+    return <GameJoin gameId={props.gameId} />;
   }
 
   // want to start a game
