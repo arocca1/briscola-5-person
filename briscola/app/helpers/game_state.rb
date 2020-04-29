@@ -2,6 +2,17 @@ module GameState
   def self.get_player_state(player:, active_game:, show_score: false)
     state = { id: player.id.to_s, game_id: active_game.id.to_s }
 
+    # so we can draw them around the table
+    state[:players] = active_game.ordered_players_in_game.map do |pl|
+      {
+        id: pl.id.to_s,
+        name: pl.name,
+      }
+    end
+    state[:my_position] = state[:players].index { |p| p[:id] == player.id.to_s }
+    state[:num_players] = active_game.game.num_players
+    state[:all_players_joined] = state[:players].length == active_game.game.num_players
+
     # if the game requires bidding and we haven't done it yet, then we shouldn't
     # return any card state
     in_active_play = true
@@ -17,14 +28,6 @@ module GameState
         state[:highest_bid] = player_max_bid.bid
         state[:highest_bidder] = player_max_bid.player_id.to_s # JavaScript is a butt
       end
-    end
-
-    # so we can draw them around the table
-    state[:players] = active_game.ordered_players_in_game.map do |pl|
-      {
-        id: pl.id.to_s,
-        name: pl.name,
-      }
     end
 
     if in_active_play

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import GameCreate from '../components/GameCreate'
 import GameJoin from '../components/GameJoin'
+import InGame from '../components/InGame'
 import Spinner from 'react-bootstrap/Spinner'
 
 const Game = props => {
@@ -13,8 +14,7 @@ const Game = props => {
   if (props.gameId) {
     // in an active game
     if (props.inGame) {
-      // // TODO
-      return <div>In game {props.gameId}</div>;
+      return <InGame playerId={props.playerId} gameId={props.gameId} />;
     }
     // need to join a game
     return <GameJoin gameId={props.gameId} />;
