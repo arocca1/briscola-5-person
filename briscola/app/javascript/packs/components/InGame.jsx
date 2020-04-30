@@ -39,6 +39,7 @@ class InGame extends React.Component {
     this.handleBidChange = this.handleBidChange.bind(this);
     this.handleMakeBid = this.handleMakeBid.bind(this);
     this.handlePassBid = this.handlePassBid.bind(this);
+    this.handleCardSelect = this.handleCardSelect.bind(this);
     this.handleSetPartnerCard = this.handleSetPartnerCard.bind(this);
   }
 
@@ -54,6 +55,10 @@ class InGame extends React.Component {
   handlePassBid(e) {
     e.preventDefault();
     this.props.handlePassBid(this.props.gameId, this.props.playerId);
+  }
+
+  handleCardSelect(e) {
+
   }
 
   handleSetPartnerCard(e) {
@@ -123,6 +128,7 @@ class InGame extends React.Component {
               windowWidth={windowWidth}
               windowHeight={windowHeight}
               gameState={this.props.gameState}
+              handleCardSelect={this.handleCardSelect}
             />
           </Layer>
           <Layer key="ScoringLayer">

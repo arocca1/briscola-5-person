@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Group, Text, Star } from 'react-konva'
 import { isItPlayerTurn } from '../util'
+import PlayerCard from './PlayerCard'
 
 const PlayerName = props => {
   // me
@@ -106,21 +107,32 @@ PlayerTurn.PropTypes = {
   gameState: PropTypes.shape.isRequired,
 }
 
+const PlayerCards = props => {
+  return null;
+}
+
+PlayerCards.PropTypes = {
+  handleCardSelect: PropTypes.func.isRequired,
+  gameState: PropTypes.shape.isRequired,
+}
+
 const PlayerInfo = props => {
   let playerBid;
-  if (props.gameState.requires_bidding && !props.gameState.bidding_done) {
-    playerBid = (
-      <PlayerBid
-        key={`${props.name}BidKey`}
-        windowWidth={props.windowWidth}
-        windowHeight={props.windowHeight}
-        relativeToMe={props.relativeToMe}
-        gameState={props.gameState}
-      />
-    )
-  }
   let playerTurn;
+  let playerCards;
   if (props.gameState.all_players_joined) {
+    if (props.gameState.requires_bidding && !props.gameState.bidding_done) {
+      playerBid = (
+        <PlayerBid
+          key={`${props.name}BidKey`}
+          windowWidth={props.windowWidth}
+          windowHeight={props.windowHeight}
+          relativeToMe={props.relativeToMe}
+          gameState={props.gameState}
+        />
+      )
+    }
+
     playerTurn = (
       <PlayerTurn
         key={`${props.name}TurnKey`}
@@ -130,7 +142,16 @@ const PlayerInfo = props => {
         gameState={props.gameState}
       />
     )
+
+    playerCards = (
+      <PlayerCards
+        key={`${props.name}CardsKey`}
+        handleCardSelect={props.handleCardSelect}
+        gameState={props.gameState}
+      />
+    )
   }
+
   return (
     <Group>
       <PlayerName
@@ -141,6 +162,7 @@ const PlayerInfo = props => {
       />
       { playerBid }
       { playerTurn }
+      { playerCards }
     </Group>
   )
 }
@@ -151,6 +173,7 @@ PlayerInfo.PropTypes = {
   relativeToMe: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   gameState: PropTypes.shape.isRequired,
+  handleCardSelect: PropTypes.func.isRequired,
 }
 
 const PlayerInfos = props => {
@@ -165,6 +188,7 @@ const PlayerInfos = props => {
           relativeToMe={i}
           name={player.name}
           gameState={props.gameState}
+          handleCardSelect={props.handleCardSelect}
         />
       );
     }
@@ -180,6 +204,7 @@ PlayerInfos.PropTypes = {
   windowWidth: PropTypes.number.isRequired,
   windowHeight: PropTypes.number.isRequired,
   gameState: PropTypes.shape.isRequired,
+  handleCardSelect: PropTypes.func.isRequired,
 };
 
 export default PlayerInfos

@@ -52,12 +52,12 @@ class ActiveGame < ApplicationRecord
     bids = self.player_active_game_bids.order(PlayerActiveGameBid.arel_table[:created_at])
     # if no one has bid or passed, we are at the beginning. The player after the dealer
     # goes first since the dealer bids last
-    if bids.where(passed: nil).where.not(bid: nil).count == bids.count
+    if bids.where(passed: nil, bid: nil).count == bids.count
       return bids[1]
     else
       # the dealer goes last in the order
       bids = bids[1..] + [bids[0]]
-      last_bidder = bids.max { |b| b.updated_at }
+      last_bidder = bids.max_by { |b| b.updated_at }
       last_bidder_idx = bids.index { |b| b.id == last_bidder.id }
       (bids.length - 1).times do |i|
         next_bidder = bids[(last_bidder_idx + i + 1) % bids.length]
@@ -65,6 +65,27 @@ class ActiveGame < ApplicationRecord
       end
     end
     nil # could not find a bidder
+  end
+
+  def deal_cards
+    dealt_cards = false
+    players = self.players_in_game.to_a
+    player_idx = 0
+    cards_in_deck = self.game.cards_in_deck.to_a
+    PlayerGameCard.transaction do
+      while cards_in_deck.any? do
+        card = cards_in_deck.delete_at(rand(cards_in_deck.length))
+        dealt_card = self.player_game_cards.new(player_id: players[player_idx].id, card_id: card.id)
+        raise ActiveRecord::Rollback if !dealt_card.save
+        player_idx = (player_idx + 1) % players.length
+      end
+
+      # also create a hand
+      raise ActiveRecord::Rollback if !self.hands.create(number: 1)
+
+      dealt_cards = true
+    end
+    dealt_cards
   end
 
   def current_player_turn

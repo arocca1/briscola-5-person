@@ -36,6 +36,8 @@ function actOnActiveGame(state = {}, action) {
     case COMPLETED_JOIN_GAME:
       return Object.assign({}, state, {
         playerId: action.playerId,
+        gameState: action.gameState,
+        loadingInProgressGame: false,
         inGame: true,
       })
     case COMPLETED_FETCH_GAME_STATE:

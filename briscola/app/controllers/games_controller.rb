@@ -19,7 +19,11 @@ class GamesController < ApplicationController
       player_in_game = active_game.player_active_game_bids.create(player_id: player.id)
       return render json: "Unable to join active game", status: 400 if player_in_game.nil?
     end
-    render json: { player_id: player.id.to_s }, status: 200
+    # we must deal the cards if the last player joins
+    if active_game.player_active_game_bids.count == active_game.game.num_players && !active_game.hands.exists?
+      return render json: "Unable to deal cards", status: 500 if !active_game.deal_cards
+    end
+    render json: { game_state: GameState.get_player_state(player: player, active_game: active_game) }
   end
 
   # create a game for others to play
@@ -50,10 +54,10 @@ class GamesController < ApplicationController
       return render json: "Invalid game", status: 400
     end
     show_score = params[:show_score] == "true" || params[:show_score] == true
-    render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
+    render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }
   end
 
   def get_supported_games
-    render json: Game.all.map { |g| { id: g.id.to_s, name: g.name } }, status: 200
+    render json: Game.all.map { |g| { id: g.id.to_s, name: g.name } }
   end
 end

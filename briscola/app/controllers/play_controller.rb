@@ -2,32 +2,6 @@ require 'briscola_hand_winner_computer'
 require 'game_state'
 
 class PlayController < ApplicationController
-  def deal_cards
-    active_game = ActiveGame.find_by(id: params[:game_id])
-    return render json: "Invalid active game", status: 400 if active_game.nil?
-
-    update_succeeded = false
-    players = active_game.players_in_game.to_a
-    player_idx = 0
-    cards_in_deck = active_game.game.cards_in_deck.to_a
-    PlayerGameCard.transaction do
-      while cards_in_deck.any? do
-        card = cards_in_deck.delete_at(rand(cards_in_deck.length))
-        dealt_card = active_game.player_game_card.new(player_id: players[player_idx].id, card_id: card.id)
-        raise ActiveRecord::Rollback if !dealt_card.save
-        player_idx = (player_idx + 1) % players.length
-      end
-
-      # also create a hand
-      raise ActiveRecord::Rollback if !active_game.hands.create(number: 1)
-
-      update_succeeded = true
-    end
-
-    return render json: "Unable to deal cards", status: 500 if !update_succeeded
-    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
-  end
-
   def play_card
     # check that card wasn't already played
     player_game_card = PlayerGameCard.find_by(id: params[:player_game_card_id])
@@ -73,6 +47,6 @@ class PlayController < ApplicationController
       end
     end
 
-    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }, status: 200
+    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }
   end
 end

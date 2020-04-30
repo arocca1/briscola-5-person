@@ -30,6 +30,12 @@ class BidsController < ApplicationController
     # if all of the required players - 1 passed, bidding is done and the non-passed bidder
     # has won; should have the highest as well
     if active_game.player_active_game_bids.where(passed: true).count == (active_game.game.num_players - 1)
+      # handle the case where everyone passes
+      max_bidder = active_game.max_bidder
+      if max_bidder.nil?
+        current_bidder = active_game.current_bidder
+        return render json: "Unable to set minimum bid for the last player", status: 500 if !current_bidder.update(bid: Game::BRISCOLA_5_PERSON_MIN_BID)
+      end
       return render json: "Unable to complete bidding", status: 400 if !active_game.update(bidding_done: true)
     end
 

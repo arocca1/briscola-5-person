@@ -17,7 +17,6 @@ Rails.application.routes.draw do
 
   resources :play do
     collection do
-      post 'deal_cards'
       post 'play_card'
     end
   end

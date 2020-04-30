@@ -19,7 +19,6 @@ export const SET_PARTNER_CARD = "SET_PARTNER_CARD";
 export const COMPLETED_SET_PARTNER_CARD = "COMPLETED_SET_PARTNER_CARD";
 
 
-export const DEAL_CARDS = "DEAL_CARDS";
 export const PLAY_CARD = "PLAY_CARD";
 
 function requestGameTypes() {
@@ -101,7 +100,9 @@ function joinGame(gameId, playerName) {
 function completeJoinGame(json) {
   return {
     type: COMPLETED_JOIN_GAME,
-    playerId: json.player_id,
+    loadingInProgressGame: false,
+    gameState: json.game_state,
+    playerId: json.game_state.id,
     inGame: true,
   }
 }
@@ -124,7 +125,6 @@ export function doJoinGame(gameId, playerName) {
     })
     .then(response => response.data)
     .then(json => dispatch(completeJoinGame(json)))
-    .then(joinGameState => dispatch(doFetchGameState(gameId, joinGameState.playerId)))
   }
 }
 

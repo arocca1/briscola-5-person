@@ -13,6 +13,16 @@ module GameState
     state[:num_required_players] = active_game.game.num_players
     state[:all_players_joined] = state[:players].length == active_game.game.num_players
 
+    state[:my_cards] = player.unplayed_cards(active_game.id).map do |pl_card|
+      {
+        id: pl_card.id.to_s,
+        player_id: player.id.to_s,
+        name: pl_card.card.name,
+        raw_value: pl_card.card.raw_value,
+        suit_id: pl_card.card.suit_id.to_s,
+      }
+    end
+
     # if the game requires bidding and we haven't done it yet, then we shouldn't
     # return any card state
     in_active_play = true
@@ -34,13 +44,16 @@ module GameState
           }
         end
 
+        max_bidder = active_game.max_bidder
+        if !max_bidder.nil?
+          state[:max_bid] = max_bidder.bid
+          state[:max_bidder_name] = max_bidder.player.name
+        end
         if active_game.player_active_game_bids.where(passed: true).count == state[:num_required_players] - 1
           state[:bidding_winner_id] = max_bidder.player_id.to_s
         # there hasn't been any bidding yet
         else
           state[:current_bidder_id] = active_game.current_bidder.player_id.to_s
-          max_bidder = active_game.max_bidder
-          state[:max_bid] = max_bidder.bid if !max_bidder.nil?
         end
 
         if state[:bidding_done]
@@ -59,15 +72,6 @@ module GameState
     end
 
     if in_active_play
-      state[:my_cards] = player.unplayed_cards(active_game.id).map do |pl_card|
-        {
-          id: pl_card.id.to_s,
-          player_id: player.id.to_s,
-          name: pl_card.card.name,
-          raw_value: pl_card.card.raw_value,
-        }
-      end
-
       cards_in_current_hand = active_game.cards_in_current_hand.order(:updated_at)
       # ordering of card playing matters
       # updated_at will be set when we set the hand_id
