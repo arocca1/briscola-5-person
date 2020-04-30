@@ -34,7 +34,7 @@ PlayerName.PropTypes = {
 const PlayerBid = props => {
   // me
   let x = props.windowWidth / 2;
-  let y = props.windowHeight * 18 / 20;
+  let y = props.windowHeight * 9 / 10;
   if (props.relativeToMe == 1) {
     x = props.windowWidth * 17 / 20;
     y = 2 * props.windowHeight / 3;
@@ -69,20 +69,20 @@ PlayerBid.PropTypes = {
 
 const PlayerTurn = props => {
   // me
-  let x = props.windowWidth / 2;
-  let y = props.windowHeight * 4 / 5;
+  let x = props.windowWidth * 9 / 20;
+  let y = props.windowHeight * 9 / 10;
   if (props.relativeToMe == 1) {
-    x = props.windowWidth * 4 / 5;
-    y = 2 * props.windowHeight / 3;
+    x = props.windowWidth * 19 / 20;
+    y = props.windowHeight * 17 / 30;
   } else if (props.relativeToMe == 2) {
-    x = props.windowWidth * 4 / 5;
-    y = props.windowHeight / 3;
+    x = props.windowWidth * 19 / 20;
+    y = props.windowHeight * 7 / 30;
   } else if (props.relativeToMe == 3) {
-    x = props.windowWidth / 5;
-    y = props.windowHeight / 3;
+    x = props.windowWidth / 20;
+    y = props.windowHeight * 7 / 30;
   } else if (props.relativeToMe == 4) {
-    x = props.windowWidth / 5;
-    y = 2 * props.windowHeight / 3;
+    x = props.windowWidth / 20;
+    y = props.windowHeight * 17 / 30;
   } // the else case is me
 
   if (isItPlayerTurn(props.gameState, props.relativeToMe)) {
@@ -108,10 +108,36 @@ PlayerTurn.PropTypes = {
 }
 
 const PlayerCards = props => {
-  return null;
+  let y = props.windowHeight * 3 / 4;
+  let startX = props.windowWidth / 2;
+  const numCards = props.gameState.my_cards.length;
+  if (numCards === 8 || numCards === 7) {
+    startX = props.windowWidth * 3 / 10;
+  } else if (numCards === 6 || numCards === 5) {
+    startX = props.windowWidth * 7 / 20;
+  } else if (numCards === 4 || numCards === 3) {
+    startX = props.windowWidth * 2 / 5;
+  }
+  const cards = props.gameState.my_cards.map((card, i) => {
+    return (
+      <PlayerCard
+        key={`${card.card_name}${card.suit_name}PlayerCardKey`}
+        x={startX + i * 70}
+        y={y}
+        suitName={card.suit_name}
+        cardName={card.card_name}
+        suitId={card.suit_id}
+        rawValue={card.raw_value}
+        handleCardSelect={props.handleCardSelect}
+      />
+    );
+  });
+  return <Group>{ cards }</Group>;
 }
 
 PlayerCards.PropTypes = {
+  windowWidth: PropTypes.number.isRequired,
+  windowHeight: PropTypes.number.isRequired,
   handleCardSelect: PropTypes.func.isRequired,
   gameState: PropTypes.shape.isRequired,
 }
@@ -146,6 +172,8 @@ const PlayerInfo = props => {
     playerCards = (
       <PlayerCards
         key={`${props.name}CardsKey`}
+        windowWidth={props.windowWidth}
+        windowHeight={props.windowHeight}
         handleCardSelect={props.handleCardSelect}
         gameState={props.gameState}
       />

@@ -21,7 +21,8 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "turbolinks": "^5.2.0"
+    "turbolinks": "^5.2.0",
+    "use-image": "^1.0.5"
   },
   "version": "0.1.0",
   "devDependencies": {
