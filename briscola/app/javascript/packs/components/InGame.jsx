@@ -3,6 +3,9 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Stage, Layer, Rect, Image, Text } from 'react-konva'
 import PlayerInfos from './PlayerInfos'
+import CurrentPlayerBiddingForm from './CurrentPlayerBiddingForm'
+import CurrentPlayerSetPartnerCardForm from './CurrentPlayerSetPartnerCardForm'
+import CurrentPlayerCardPlayForm from './CurrentPlayerCardPlayForm'
 import Spinner from 'react-bootstrap/Spinner'
 
 import {
@@ -70,8 +73,9 @@ class InGame extends React.Component {
     if (!this.props.gameState) {
       return <Spinner animation="border" />;
     }
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
+    // leave room for actions
+    const windowWidth = window.innerWidth * 0.9;
+    const windowHeight = window.innerHeight * 0.9;
     let text;
     if (!this.props.gameState.all_players_joined) {
       text = 'Waiting for more players to join...';
@@ -94,10 +98,6 @@ class InGame extends React.Component {
               windowWidth={windowWidth}
               windowHeight={windowHeight}
               gameState={this.props.gameState}
-              handleBidChange={this.handleBidChange}
-              handleMakeBid={this.handleMakeBid}
-              handlePassBid={this.handlePassBid}
-              handleSetPartnerCard={this.handleSetPartnerCard}
             />
           </Layer>
           <Layer key="ScoringLayer">
@@ -107,6 +107,19 @@ class InGame extends React.Component {
           <Layer key="MiscLayer">
           </Layer>
         </Stage>
+        <CurrentPlayerBiddingForm
+          gameState={this.props.gameState}
+          handleBidChange={this.handleBidChange}
+          handleMakeBid={this.handleMakeBid}
+          handlePassBid={this.handlePassBid}
+        />
+        <CurrentPlayerSetPartnerCardForm
+          gameState={this.props.gameState}
+          handleSetPartnerCard={this.handleSetPartnerCard}
+        />
+        <CurrentPlayerCardPlayForm
+          gameState={this.props.gameState}
+        />
       </div>
     )
   }

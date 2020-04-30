@@ -1,16 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Group, Text, Rect, Label } from 'react-konva'
+import { Group, Text, Star } from 'react-konva'
 
 const PlayerName = props => {
   // me
   let x = props.windowWidth / 2;
-  let y = props.windowHeight - props.windowHeight / 20;
+  let y = props.windowHeight * 19 / 20;
   if (props.relativeToMe == 1) {
-    x = props.windowWidth - props.windowWidth / 20;
+    x = props.windowWidth * 19 / 20;
     y = 2 * props.windowHeight / 3;
   } else if (props.relativeToMe == 2) {
-    x = props.windowWidth - props.windowWidth / 20;
+    x = props.windowWidth * 19 / 20;
     y = props.windowHeight / 3;
   } else if (props.relativeToMe == 3) {
     x = props.windowWidth / 20;
@@ -31,8 +31,8 @@ PlayerName.PropTypes = {
 
 const PlayerBid = props => {
   // me
-  let x = props.windowWidth * 3 / 4;
-  let y = props.windowHeight * 17 / 20;
+  let x = props.windowWidth / 2;
+  let y = props.windowHeight * 18 / 20;
   if (props.relativeToMe == 1) {
     x = props.windowWidth * 17 / 20;
     y = 2 * props.windowHeight / 3;
@@ -40,48 +40,22 @@ const PlayerBid = props => {
     x = props.windowWidth * 17 / 20;
     y = props.windowHeight / 3;
   } else if (props.relativeToMe == 3) {
-    x = props.windowWidth * 3 / 20;
+    x = props.windowWidth / 10;
     y = props.windowHeight / 3;
   } else if (props.relativeToMe == 4) {
-    x = props.windowWidth * 3 / 20;
+    x = props.windowWidth / 10;
     y = 2 * props.windowHeight / 3;
   } // the else case is me
 
   const bidKey = `${props.gameState.id}BidKey`;
-  const playerBid = props.gameState.player_bids[(props.gameState.my_position + props.relativeToMe) % props.gameState.num_players];
-  let bidGroup = null;
-  if (props.relativeToMe == 0) {
-    // TODO need to figure out how to get inputs to be drawn
-    bidGroup = (
-      <Group
-        key={bidKey}
-        x={x}
-        y={y}
-      >
-        <Text text="Bid amount: " />
-        <Label onClick={props.handleMakeBid}><Text text="Make Bid"/></Label>
-        <Label onClick={props.handlePassBid}><Text text="Pass"/></Label>
-      </Group>
-    )
-  } else {
-    let playerText = "No bid yet";
-    if (playerBid.passed) {
-      playerText = "Passed";
-    } else if (playerBid.bid) {
-      playerText = `Bid Amount: ${playerBid.bid}`;
-    }
-    bidGroup = (
-      <Group
-        key={bidKey}
-        x={x}
-        y={y}
-      >
-        <Text text={playerText} />
-      </Group>
-    )
+  const playerBid = props.gameState.player_bids[(props.gameState.my_position + props.relativeToMe) % props.gameState.num_required_players];
+  let playerText = "No bid yet";
+  if (playerBid.passed) {
+    playerText = "Passed";
+  } else if (playerBid.bid) {
+    playerText = `Bid Amount: ${playerBid.bid}`;
   }
-
-  return bidGroup;
+  return <Text x={x} y={y} text={playerText} />;
 }
 
 PlayerBid.PropTypes = {
@@ -89,9 +63,63 @@ PlayerBid.PropTypes = {
   windowHeight: PropTypes.number.isRequired,
   relativeToMe: PropTypes.number.isRequired,
   gameState: PropTypes.shape.isRequired,
-  handleBidChange: PropTypes.func.isRequired,
-  handleMakeBid: PropTypes.func.isRequired,
-  handlePassBid: PropTypes.func.isRequired,
+}
+
+const PlayerTurn = props => {
+  // me
+  let x = props.windowWidth / 2;
+  let y = props.windowHeight * 4 / 5;
+  if (props.relativeToMe == 1) {
+    x = props.windowWidth * 4 / 5;
+    y = 2 * props.windowHeight / 3;
+  } else if (props.relativeToMe == 2) {
+    x = props.windowWidth * 4 / 5;
+    y = props.windowHeight / 3;
+  } else if (props.relativeToMe == 3) {
+    x = props.windowWidth / 5;
+    y = props.windowHeight / 3;
+  } else if (props.relativeToMe == 4) {
+    x = props.windowWidth / 5;
+    y = 2 * props.windowHeight / 3;
+  } // the else case is me
+
+  let drawPlayerTurnStar = false;
+  const player = props.gameState.players[(props.gameState.my_position + props.relativeToMe) % props.gameState.num_required_players];
+  if (props.gameState.requires_bidding) {
+    if (props.gameState.bidding_done) {
+      if (props.gameState.partner_card) {
+        if (props.gameState.current_player_turn === player.id) {
+          drawPlayerTurnStar = true;
+        }
+      } else if (props.gameState.bidding_winner_id === player.id) {
+        drawPlayerTurnStar = true;
+      }
+    } else if (props.gameState.current_bidder_id === player.id) {
+      drawPlayerTurnStar = true;
+    }
+  } else if (props.gameState.current_player_turn === player.id) {
+    drawPlayerTurnStar = true;
+  }
+  if (drawPlayerTurnStar) {
+    return (
+      <Star
+        x={x}
+        y={y}
+        fill="#89b717"
+        numPoints={5}
+        innerRadius={10}
+        outerRadius={20}
+      />
+    );
+  }
+  return null;
+}
+
+PlayerTurn.PropTypes = {
+  windowWidth: PropTypes.number.isRequired,
+  windowHeight: PropTypes.number.isRequired,
+  relativeToMe: PropTypes.number.isRequired,
+  gameState: PropTypes.shape.isRequired,
 }
 
 const PlayerInfo = props => {
@@ -104,9 +132,18 @@ const PlayerInfo = props => {
         windowHeight={props.windowHeight}
         relativeToMe={props.relativeToMe}
         gameState={props.gameState}
-        handleBidChange={props.handleBidChange}
-        handleMakeBid={props.handleMakeBid}
-        handlePassBid={props.handlePassBid}
+      />
+    )
+  }
+  let playerTurn;
+  if (props.gameState.all_players_joined) {
+    playerTurn = (
+      <PlayerTurn
+        key={`${props.name}TurnKey`}
+        windowWidth={props.windowWidth}
+        windowHeight={props.windowHeight}
+        relativeToMe={props.relativeToMe}
+        gameState={props.gameState}
       />
     )
   }
@@ -119,6 +156,7 @@ const PlayerInfo = props => {
         name={props.name}
       />
       { playerBid }
+      { playerTurn }
     </Group>
   )
 }
@@ -129,15 +167,11 @@ PlayerInfo.PropTypes = {
   relativeToMe: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   gameState: PropTypes.shape.isRequired,
-  handleBidChange: PropTypes.func.isRequired,
-  handleMakeBid: PropTypes.func.isRequired,
-  handlePassBid: PropTypes.func.isRequired,
-  handleSetPartnerCard: PropTypes.func.isRequired,
 }
 
 const PlayerInfos = props => {
-  const players = [...Array(props.gameState.num_players)].map((_, i) => {
-    const player = props.gameState.players[(props.gameState.my_position + i) % props.gameState.num_players];
+  const players = [...Array(props.gameState.num_required_players)].map((_, i) => {
+    const player = props.gameState.players[(props.gameState.my_position + i) % props.gameState.num_required_players];
     if (player) {
       return (
         <PlayerInfo
@@ -147,10 +181,6 @@ const PlayerInfos = props => {
           relativeToMe={i}
           name={player.name}
           gameState={props.gameState}
-          handleBidChange={props.handleBidChange}
-          handleMakeBid={props.handleMakeBid}
-          handlePassBid={props.handlePassBid}
-          handleSetPartnerCard={props.handleSetPartnerCard}
         />
       );
     }
@@ -166,10 +196,6 @@ PlayerInfos.PropTypes = {
   windowWidth: PropTypes.number.isRequired,
   windowHeight: PropTypes.number.isRequired,
   gameState: PropTypes.shape.isRequired,
-  handleBidChange: PropTypes.func.isRequired,
-  handleMakeBid: PropTypes.func.isRequired,
-  handlePassBid: PropTypes.func.isRequired,
-  handleSetPartnerCard: PropTypes.func.isRequired,
 };
 
 export default PlayerInfos
