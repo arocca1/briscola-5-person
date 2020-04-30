@@ -185,7 +185,7 @@ export function doMakeBid(gameId, playerId, bid) {
       baseURL: baseUrl(),
       data: {
         game_id: gameId,
-        player_name: playerId,
+        player_id: playerId,
         bid: bid,
       },
       headers: {
@@ -221,7 +221,7 @@ export function doPassBid(gameId, playerId) {
       baseURL: baseUrl(),
       data: {
         game_id: gameId,
-        player_name: playerId,
+        player_id: playerId,
       },
       headers: {
         'X-CSRF-Token': csrf,
@@ -257,7 +257,7 @@ export function doSetPartnerCard(gameId, playerId, suitId, rawValue) {
       baseURL: baseUrl(),
       data: {
         game_id: gameId,
-        player_name: playerId,
+        player_id: playerId,
         suit_id: suitId,
         raw_value: rawValue,
       },

@@ -48,6 +48,25 @@ class ActiveGame < ApplicationRecord
     self.player_active_game_bids.find_by("bid = (#{self.player_active_game_bids.select('MAX(bid)').to_sql})")
   end
 
+  def current_bidder
+    bids = self.player_active_game_bids.order(PlayerActiveGameBid.arel_table[:created_at])
+    # if no one has bid or passed, we are at the beginning. The player after the dealer
+    # goes first since the dealer bids last
+    if bids.where(passed: nil).where.not(bid: nil).count == bids.count
+      return bids[1]
+    else
+      # the dealer goes last in the order
+      bids = bids[1..] + [bids[0]]
+      last_bidder = bids.max { |b| b.updated_at }
+      last_bidder_idx = bids.index { |b| b.id == last_bidder.id }
+      (bids.length - 1).times do |i|
+        next_bidder = bids[(last_bidder_idx + i + 1) % bids.length]
+        return next_bidder if !next_bidder.passed
+      end
+    end
+    nil # could not find a bidder
+  end
+
   def current_player_turn
     player_ids = self.ordered_players_in_game.pluck(:id)
 

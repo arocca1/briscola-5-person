@@ -1,6 +1,6 @@
 require 'game_state'
 
-def BidsController < ApplicationController
+class BidsController < ApplicationController
   def make_bid
     active_game = ActiveGame.find_by(id: params[:game_id])
     return render json: "Invalid active game", status: 400 if active_game.nil?

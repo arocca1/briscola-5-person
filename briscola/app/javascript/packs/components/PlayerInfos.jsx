@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Group, Text, Star } from 'react-konva'
+import { isItPlayerTurn } from '../util'
 
 const PlayerName = props => {
   // me
@@ -83,24 +84,7 @@ const PlayerTurn = props => {
     y = 2 * props.windowHeight / 3;
   } // the else case is me
 
-  let drawPlayerTurnStar = false;
-  const player = props.gameState.players[(props.gameState.my_position + props.relativeToMe) % props.gameState.num_required_players];
-  if (props.gameState.requires_bidding) {
-    if (props.gameState.bidding_done) {
-      if (props.gameState.partner_card) {
-        if (props.gameState.current_player_turn === player.id) {
-          drawPlayerTurnStar = true;
-        }
-      } else if (props.gameState.bidding_winner_id === player.id) {
-        drawPlayerTurnStar = true;
-      }
-    } else if (props.gameState.current_bidder_id === player.id) {
-      drawPlayerTurnStar = true;
-    }
-  } else if (props.gameState.current_player_turn === player.id) {
-    drawPlayerTurnStar = true;
-  }
-  if (drawPlayerTurnStar) {
+  if (isItPlayerTurn(props.gameState, props.relativeToMe)) {
     return (
       <Star
         x={x}

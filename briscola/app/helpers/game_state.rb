@@ -34,16 +34,13 @@ module GameState
           }
         end
 
-        max_bidder = active_game.max_bidder
         if active_game.player_active_game_bids.where(passed: true).count == state[:num_required_players] - 1
           state[:bidding_winner_id] = max_bidder.player_id.to_s
         # there hasn't been any bidding yet
-        elsif max_bidder.nil?
-          # the dealer bids last
-          state[:current_bidder_id] = state[:players][1][:id]
         else
-          bidder_idx = (state[:players].index { |p| p[:id] == max_bidder.id.to_s } + 1) % state[:num_required_players]
-          state[:current_bidder_id] = state[:players][bidder_idx][:id]
+          state[:current_bidder_id] = active_game.current_bidder.player_id.to_s
+          max_bidder = active_game.max_bidder
+          state[:max_bid] = max_bidder.bid if !max_bidder.nil?
         end
 
         if state[:bidding_done]

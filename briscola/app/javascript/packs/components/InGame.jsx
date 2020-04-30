@@ -7,6 +7,7 @@ import CurrentPlayerBiddingForm from './CurrentPlayerBiddingForm'
 import CurrentPlayerSetPartnerCardForm from './CurrentPlayerSetPartnerCardForm'
 import CurrentPlayerCardPlayForm from './CurrentPlayerCardPlayForm'
 import Spinner from 'react-bootstrap/Spinner'
+import { isItMyTurn } from '../util'
 
 import {
   doFetchGameState,
@@ -33,26 +34,30 @@ const TableRect = props => {
 class InGame extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {bid: 0};
+    this.state = { bid: 0 };
 
+    this.handleBidChange = this.handleBidChange.bind(this);
     this.handleMakeBid = this.handleMakeBid.bind(this);
     this.handlePassBid = this.handlePassBid.bind(this);
     this.handleSetPartnerCard = this.handleSetPartnerCard.bind(this);
   }
 
-  handleMakeBid(event) {
+  handleMakeBid(e) {
+    e.preventDefault();
     this.props.handleMakeBid(this.props.gameId, this.props.playerId, this.state.bid);
   }
 
-  handleBidChange(event) {
-    this.setState({ bid: event.target.value });
+  handleBidChange(e) {
+    this.setState({ bid: e.target.value });
   }
 
-  handlePassBid(event) {
-    this.props.handleMakeBid(this.props.gameId, this.props.playerId);
+  handlePassBid(e) {
+    e.preventDefault();
+    this.props.handlePassBid(this.props.gameId, this.props.playerId);
   }
 
-  handleSetPartnerCard(event) {
+  handleSetPartnerCard(e) {
+    e.preventDefault();
     this.props.handleSetPartnerCard(this.props.gameId, this.props.playerId, this.props.suitId, this.props.rawValue);
   }
 
@@ -86,6 +91,26 @@ class InGame extends React.Component {
     if (text) {
       message = <Text key='MainMessage' x={windowWidth / 4} y={windowHeight / 2} text={text} />;
     }
+    let actionForms;
+    if (isItMyTurn(this.props.gameState)) {
+      actionForms = (
+        <div>
+          <CurrentPlayerBiddingForm
+            gameState={this.props.gameState}
+            handleBidChange={this.handleBidChange}
+            handleMakeBid={this.handleMakeBid}
+            handlePassBid={this.handlePassBid}
+          />
+          <CurrentPlayerSetPartnerCardForm
+            gameState={this.props.gameState}
+            handleSetPartnerCard={this.handleSetPartnerCard}
+          />
+          <CurrentPlayerCardPlayForm
+            gameState={this.props.gameState}
+          />
+        </div>
+      );
+    }
     return (
       <div key="InPageDiv">
         <Stage width={windowWidth} height={windowHeight}>
@@ -107,19 +132,7 @@ class InGame extends React.Component {
           <Layer key="MiscLayer">
           </Layer>
         </Stage>
-        <CurrentPlayerBiddingForm
-          gameState={this.props.gameState}
-          handleBidChange={this.handleBidChange}
-          handleMakeBid={this.handleMakeBid}
-          handlePassBid={this.handlePassBid}
-        />
-        <CurrentPlayerSetPartnerCardForm
-          gameState={this.props.gameState}
-          handleSetPartnerCard={this.handleSetPartnerCard}
-        />
-        <CurrentPlayerCardPlayForm
-          gameState={this.props.gameState}
-        />
+        { actionForms }
       </div>
     )
   }
