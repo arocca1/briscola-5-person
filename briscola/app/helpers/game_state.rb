@@ -24,6 +24,17 @@ module GameState
       }
     end
 
+    state[:suits] = Suit.joins(card_type: { games: :active_games })
+                        .where(active_games: { id: active_game.id })
+                        .pluck(:id, :name)
+                        .uniq
+                        .map { |s| { id: s[0].to_s, name: s[1] } }
+    state[:raw_values] = Card.joins({ suit: { card_type: { games: :active_games }}})
+                             .where(active_games: { id: active_game.id })
+                             .pluck(:raw_value, :name)
+                             .uniq
+                             .map { |r| { raw_value: r[0], name: r[1] } }
+
     # if the game requires bidding and we haven't done it yet, then we shouldn't
     # return any card state
     in_active_play = true

@@ -10,6 +10,8 @@ import {
   PASS_BID,
   COMPLETED_PASS_BID,
   SELECT_CARD,
+  SET_PARTNER_CARD_SUIT,
+  SET_PARTNER_CARD_RAW_VALUE,
   SET_PARTNER_CARD,
   COMPLETED_SET_PARTNER_CARD,
   COMPLETED_PLAY_CARD,
@@ -67,10 +69,18 @@ function actOnActiveGame(state = {}, action) {
         rawValue: action.rawValue,
         cardName: action.cardName,
       })
+    case SET_PARTNER_CARD_SUIT:
+      return Object.assign({}, state, {
+        partnerSuitId: action.partnerSuitId,
+      })
+    case SET_PARTNER_CARD_RAW_VALUE:
+      return Object.assign({}, state, {
+        partnerRawValue: action.partnerRawValue,
+      })
     case SET_PARTNER_CARD:
       return Object.assign({}, state, {
-        suitId: action.suitId,
-        rawValue: action.rawValue,
+        partnerSuitId: action.partnerSuitId,
+        partnerRawValue: action.partnerRawValue,
       })
     case COMPLETED_MAKE_BID:
     case COMPLETED_PASS_BID:

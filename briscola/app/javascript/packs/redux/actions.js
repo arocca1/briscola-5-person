@@ -17,6 +17,8 @@ export const COMPLETED_MAKE_BID = "COMPLETED_MAKE_BID";
 export const PASS_BID = "PASS_BID";
 export const COMPLETED_PASS_BID = "COMPLETED_PASS_BID";
 export const SELECT_CARD = "SELECT_CARD";
+export const SET_PARTNER_CARD_SUIT = "SET_PARTNER_CARD_SUIT";
+export const SET_PARTNER_CARD_RAW_VALUE = "SET_PARTNER_CARD_RAW_VALUE";
 export const SET_PARTNER_CARD = "SET_PARTNER_CARD";
 export const COMPLETED_SET_PARTNER_CARD = "COMPLETED_SET_PARTNER_CARD";
 export const PLAY_CARD = "PLAY_CARD";
@@ -250,11 +252,25 @@ export function selectCard(suitName, suitId, rawValue, cardName) {
   }
 }
 
+function setPartnerCardSuit(suitId) {
+  return {
+    type: SET_PARTNER_CARD_SUIT,
+    partnerCardSuit: suitId,
+  }
+}
+
+function setPartnerCardRawValue(rawValue) {
+  return {
+    type: SET_PARTNER_CARD_RAW_VALUE,
+    partnerCardRawValue: rawValue,
+  }
+}
+
 function setPartnerCard(suitId, rawValue) {
   return {
     type: SET_PARTNER_CARD,
-    suitId,
-    rawValue,
+    partnerSuitId: suitId,
+    partnerRawValue: rawValue,
   }
 }
 
