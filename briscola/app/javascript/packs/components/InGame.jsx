@@ -18,6 +18,7 @@ import {
   selectCard,
   setPartnerSuit,
   setPartnerCardRawValue,
+  doPlayCard,
 } from '../redux/actions'
 
 const TableRect = props => {
@@ -133,7 +134,7 @@ class InGame extends React.Component {
             gameState={this.props.gameState}
             suitName={this.props.suitName}
             cardName={this.props.cardName}
-            handleSetPartnerCard={this.handleSetPartnerCard}
+            handlePlayCard={this.handlePlayCard}
           />
         </div>
       );

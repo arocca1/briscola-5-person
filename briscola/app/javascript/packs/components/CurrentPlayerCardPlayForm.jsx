@@ -13,7 +13,7 @@ const CurrentPlayerCardPlayForm = props => {
       <h4>Playing card</h4>
       <div>
         <label>Play {`${props.cardName} di ${props.suitName}`}?</label>
-        <Button variant="primary" onClick={props.handleSetPartnerCard}>Do it</Button>
+        <Button variant="primary" onClick={props.handlePlayCard}>Do it</Button>
       </div>
     </div>
   );
@@ -23,7 +23,7 @@ CurrentPlayerCardPlayForm.PropTypes = {
   gameState: PropTypes.shape.isRequired,
   suitName: PropTypes.string.isRequired,
   cardName: PropTypes.string.isRequired,
-  handleSetPartnerCard: PropTypes.func.isRequired,
+  handlePlayCard: PropTypes.func.isRequired,
 }
 
 export default CurrentPlayerCardPlayForm

@@ -5,7 +5,7 @@ class PlayController < ApplicationController
   def play_card
     active_game = ActiveGame.find_by(id: params[:game_id])
     return render json: "Invalid active game", status: 400 if active_game.nil?
-    player_game_card = active_game.player_game_cards.joins(:card).find_by(card: { suit_id: params[:suit_id], raw_value: params[:raw_value] })
+    player_game_card = active_game.player_game_cards.joins(:card).find_by(cards: { suit_id: params[:suit_id], raw_value: params[:raw_value] })
     return render json: "Invalid card", status: 400 if player_game_card.nil?
 
     player = Player.find_by(id: params[:player_id])
@@ -49,6 +49,6 @@ class PlayController < ApplicationController
       end
     end
 
-    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game, show_score: show_score) }
+    return render json: { game_state: GameState.get_player_state(player: player, active_game: active_game) }
   end
 end
