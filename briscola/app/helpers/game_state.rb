@@ -17,8 +17,9 @@ module GameState
       {
         id: pl_card.id.to_s,
         player_id: player.id.to_s,
-        name: pl_card.card.name,
+        card_name: pl_card.card.name.downcase,
         raw_value: pl_card.card.raw_value,
+        suit_name: pl_card.card.suit.name.downcase,
         suit_id: pl_card.card.suit_id.to_s,
       }
     end
