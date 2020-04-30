@@ -252,14 +252,14 @@ export function selectCard(suitName, suitId, rawValue, cardName) {
   }
 }
 
-function setPartnerCardSuit(suitId) {
+export function setPartnerSuit(suitId) {
   return {
     type: SET_PARTNER_CARD_SUIT,
-    partnerCardSuit: suitId,
+    partnerCardSuitId: suitId,
   }
 }
 
-function setPartnerCardRawValue(rawValue) {
+export function setPartnerCardRawValue(rawValue) {
   return {
     type: SET_PARTNER_CARD_RAW_VALUE,
     partnerCardRawValue: rawValue,
@@ -269,8 +269,8 @@ function setPartnerCardRawValue(rawValue) {
 function setPartnerCard(suitId, rawValue) {
   return {
     type: SET_PARTNER_CARD,
-    partnerSuitId: suitId,
-    partnerRawValue: rawValue,
+    partnerCardSuitId: suitId,
+    partnerCardRawValue: rawValue,
   }
 }
 

@@ -16,7 +16,7 @@ import {
   doSetPartnerCard,
   setBid,
   selectCard,
-  setpartnerSuit,
+  setPartnerSuit,
   setPartnerCardRawValue,
 } from '../redux/actions'
 
@@ -44,7 +44,7 @@ class InGame extends React.Component {
     this.handlePassBid = this.handlePassBid.bind(this);
     this.handleCardSelect = this.handleCardSelect.bind(this);
     this.handleSetPartnerSuit = this.handleSetPartnerSuit.bind(this);
-    this.handleSetPartnerRawValue = this.handleSetPartnerRawValue.bind(this);
+    this.handleSetPartnerCardRawValue = this.handleSetPartnerCardRawValue.bind(this);
     this.handleSetPartnerCard = this.handleSetPartnerCard.bind(this);
     this.handlePlayCard = this.handlePlayCard.bind(this);
   }
@@ -69,12 +69,12 @@ class InGame extends React.Component {
     this.props.handleSetPartnerSuit(e);
   }
 
-  handleSetPartnerRawValue(e) {
-    this.props.handleSetPartnerRawValue(e);
+  handleSetPartnerCardRawValue(e) {
+    this.props.handleSetPartnerCardRawValue(e);
   }
 
   handleSetPartnerCard(e) {
-    this.props.handleSetPartnerCard(this.props.gameId, this.props.playerId, this.props.partnerSuitId, this.props.partnerCardRawValue);
+    this.props.handleSetPartnerCard(this.props.gameId, this.props.playerId, this.props.partnerCardSuitId, this.props.partnerCardRawValue);
   }
 
   handlePlayCard(e) {
@@ -123,10 +123,10 @@ class InGame extends React.Component {
           />
           <CurrentPlayerSetPartnerCardForm
             gameState={this.props.gameState}
-            partnerSuitId={this.props.partnerSuitId}
-            partnerRawValue={this.props.partnerRawValue}
-            handleSetPartnerSuit={this.props.handleSetPartnerSuit}
-            handleSetPartnerRawValue={this.props.handleSetPartnerRawValue}
+            partnerCardSuitId={this.props.partnerCardSuitId}
+            partnerCardRawValue={this.props.partnerCardRawValue}
+            handleSetPartnerSuit={this.handleSetPartnerSuit}
+            handleSetPartnerCardRawValue={this.handleSetPartnerCardRawValue}
             handleSetPartnerCard={this.handleSetPartnerCard}
           />
           <CurrentPlayerCardPlayForm
@@ -175,7 +175,7 @@ const mapStateToProps = (state, ownProps) => {
     suitId,
     rawValue,
     cardName,
-    partnerSuitId,
+    partnerCardSuitId,
     partnerCardRawValue,
   } = activeGameReducer || {
     gameState: {},
@@ -184,7 +184,7 @@ const mapStateToProps = (state, ownProps) => {
     suitId: '',
     rawValue: 0,
     cardName: '',
-    partnerSuitId: '',
+    partnerCardSuitId: '',
     partnerCardRawValue: '',
   }
   return {
@@ -194,7 +194,7 @@ const mapStateToProps = (state, ownProps) => {
     suitId,
     rawValue,
     cardName,
-    partnerSuitId,
+    partnerCardSuitId,
     partnerCardRawValue,
     gameId: ownProps.gameId,
     playerId: ownProps.playerId,
@@ -208,8 +208,8 @@ const mapDispatchToProps = dispatch => {
     handleMakeBid: (gameId, playerId, bid) => dispatch(doMakeBid(gameId, playerId, bid)),
     handlePassBid: (gameId, playerId) => dispatch(doPassBid(gameId, playerId)),
     handleCardSelect: (suitName, suitId, rawValue, cardName) => dispatch(selectCard(suitName, suitId, rawValue, cardName)),
-    handleSetPartnerSuit: (suitId) => dispatch(setpartnerSuit(suitId)),
-    handleSetPartnerRawValue: (rawValue) => dispatch(setPartnerCardRawValue(rawValue)),
+    handleSetPartnerSuit: (suitId) => dispatch(setPartnerSuit(suitId)),
+    handleSetPartnerCardRawValue: (rawValue) => dispatch(setPartnerCardRawValue(rawValue)),
     handleSetPartnerCard: (gameId, playerId, suitId, rawValue) => dispatch(doSetPartnerCard(gameId, playerId, suitId, rawValue)),
     handlePlayCard: (gameId, playerId, suitId, rawValue) => dispatch(doPlayCard(gameId, playerId, suitId, rawValue)),
   }

@@ -17,11 +17,11 @@ class ActiveGame < ApplicationRecord
   has_many :hands, inverse_of: :active_game
 
   def previous_hand
-    self.hands.where("hands.number = (#{self.hands.select('MAX(number)').to_sql}) - 1")
+    self.hands.find_by("hands.number = (#{self.hands.select('MAX(number)').to_sql}) - 1")
   end
 
   def current_hand
-    self.hands.where("hands.number = (#{self.hands.select('MAX(number)').to_sql})")
+    self.hands.find_by("hands.number = (#{self.hands.select('MAX(number)').to_sql})")
   end
 
   def cards_in_current_hand
@@ -96,8 +96,8 @@ class ActiveGame < ApplicationRecord
     # if this is the very first hand, the max bidder goes first
     # if some number of cards have been played, we are displaced from that
     # many positions from the second person to join
-    prev_winner_id = curr_hand.number == 1 ? self.max_bidder.pluck(:player_id).first : self.previous_hand.pluck(:winner_id).first
+    prev_winner_id = curr_hand.number == 1 ? self.max_bidder.player_id : self.previous_hand.winner_id
     prev_winner_idx = player_ids.index(prev_winner_id)
-    player_ids[(prev_winner_idx + 1 + cards_played_in_current_hand) % self.game.num_players]
+    player_ids[(prev_winner_idx + cards_played_in_current_hand) % self.game.num_players]
   end
 end

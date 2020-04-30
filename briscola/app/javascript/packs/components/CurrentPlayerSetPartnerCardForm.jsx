@@ -12,12 +12,13 @@ const CurrentPlayerSetPartnerCardForm = props => {
   const suitValues = props.gameState.suits.map(suit => {
     return <Dropdown.Item key={`${suit.name}Key`} eventKey={suit.id}>{ suit.name }</Dropdown.Item>
   })
-  const suitValue = props.gameState.suits.find(elem => elem.id === props.partnerSuitId);
+  const suitValue = props.gameState.suits.find(elem => elem.id == props.partnerCardSuitId);
   const suitDropdown = (
     <DropdownButton
       key="SuitDropdownKey"
+      style={{ display: 'inline-block' }}
       variant="secondary"
-      onChange={props.handleSetPartnerSuit}
+      onSelect={props.handleSetPartnerSuit}
       title={`${suitValue && suitValue.name || "Suit"}`}
     >
       { suitValues }
@@ -27,13 +28,14 @@ const CurrentPlayerSetPartnerCardForm = props => {
   const rawValues = props.gameState.raw_values.map(rawValue => {
     return <Dropdown.Item key={`${rawValue.name}Key`} eventKey={rawValue.raw_value}>{ rawValue.name }</Dropdown.Item>
   })
-  const partnerRawValue = props.gameState.raw_values.find(elem => elem.raw_value === props.partnerRawValue);
+  const partnerCardRawValue = props.gameState.raw_values.find(elem => elem.raw_value == props.partnerCardRawValue);
   const rawValueDropdown = (
     <DropdownButton
-      key="SuitDropdownKey"
+      key="RawValueDropdownKey"
+      style={{ display: 'inline-block' }}
       variant="secondary"
-      onChange={props.handleSetPartnerRawValue}
-      title={`${partnerRawValue && partnerRawValue.name || "Value"}`}
+      onSelect={props.handleSetPartnerCardRawValue}
+      title={`${partnerCardRawValue && partnerCardRawValue.name || "Value"}`}
     >
       { rawValues }
     </DropdownButton>
@@ -50,10 +52,10 @@ const CurrentPlayerSetPartnerCardForm = props => {
 
 CurrentPlayerSetPartnerCardForm.PropTypes = {
   gameState: PropTypes.shape.isRequired,
-  partnerSuitId: PropTypes.string,
-  partnerRawValue: PropTypes.string,
+  partnerCardSuitId: PropTypes.string,
+  partnerCardRawValue: PropTypes.string,
   handleSetPartnerSuit: PropTypes.func.isRequired,
-  handleSetPartnerRawValue: PropTypes.func.isRequired,
+  handleSetPartnerCardRawValue: PropTypes.func.isRequired,
   handleSetPartnerCard: PropTypes.func.isRequired,
 }
 

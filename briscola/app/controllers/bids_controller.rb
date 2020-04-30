@@ -54,7 +54,7 @@ class BidsController < ApplicationController
     suit_id = params[:suit_id]
     raw_value = params[:raw_value]
     # TODO wrap this in a transaction
-    player_game_card = active_game.player_game_cards.joins(:card).where(cards: { raw_value: raw_value, suit_id: suit_id })
+    player_game_card = active_game.player_game_cards.joins(:card).find_by(cards: { raw_value: raw_value, suit_id: suit_id })
     return render json: "You have this card. It cannot be the partner card" if player_game_card.player_id == player.id
 
     return render json: "Could not set this card to be the partner card" if !player_game_card.update(is_partner_card: true)

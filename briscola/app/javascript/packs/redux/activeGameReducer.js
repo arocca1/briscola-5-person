@@ -71,16 +71,16 @@ function actOnActiveGame(state = {}, action) {
       })
     case SET_PARTNER_CARD_SUIT:
       return Object.assign({}, state, {
-        partnerSuitId: action.partnerSuitId,
+        partnerCardSuitId: action.partnerCardSuitId,
       })
     case SET_PARTNER_CARD_RAW_VALUE:
       return Object.assign({}, state, {
-        partnerRawValue: action.partnerRawValue,
+        partnerCardRawValue: action.partnerCardRawValue,
       })
     case SET_PARTNER_CARD:
       return Object.assign({}, state, {
-        partnerSuitId: action.partnerSuitId,
-        partnerRawValue: action.partnerRawValue,
+        partnerCardSuitId: action.partnerCardSuitId,
+        partnerCardRawValue: action.partnerCardRawValue,
       })
     case COMPLETED_MAKE_BID:
     case COMPLETED_PASS_BID:
