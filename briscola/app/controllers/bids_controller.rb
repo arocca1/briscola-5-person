@@ -47,7 +47,7 @@ class BidsController < ApplicationController
     return render json: "Invalid active game", status: 400 if active_game.nil?
     player = Player.find_by(id: params[:player_id])
     return render json: "Player does not exist" if player.nil?
-    player_in_game = active_game.player_active_game_bids.where(player_id: player.id)
+    player_in_game = active_game.player_active_game_bids.find_by(player_id: player.id)
     return render json: "Player not in game", status: 400 if player_in_game.nil?
     return render json: "You did not have the highest bid", status: 400 if player_in_game.bid != active_game.player_active_game_bids.maximum(:bid)
 

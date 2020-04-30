@@ -19,9 +19,8 @@ export const COMPLETED_PASS_BID = "COMPLETED_PASS_BID";
 export const SELECT_CARD = "SELECT_CARD";
 export const SET_PARTNER_CARD = "SET_PARTNER_CARD";
 export const COMPLETED_SET_PARTNER_CARD = "COMPLETED_SET_PARTNER_CARD";
-
-
 export const PLAY_CARD = "PLAY_CARD";
+export const COMPLETED_PLAY_CARD = "COMPLETED_PLAY_CARD";
 
 function requestGameTypes() {
   return {
@@ -251,7 +250,7 @@ export function selectCard(suitName, suitId, rawValue, cardName) {
   }
 }
 
-function setPartnerCard() {
+function setPartnerCard(suitId, rawValue) {
   return {
     type: SET_PARTNER_CARD,
     suitId,
@@ -268,11 +267,11 @@ function completeSetPartnerCard(json) {
 
 export function doSetPartnerCard(gameId, playerId, suitId, rawValue) {
   return dispatch => {
-    dispatch(passBid(suitId, rawValue))
+    dispatch(setPartnerCard(suitId, rawValue))
     const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
     axios({
       method: 'post',
-      url: '/bids/pass_bid',
+      url: '/bids/set_partner_card',
       baseURL: baseUrl(),
       data: {
         game_id: gameId,
@@ -286,5 +285,41 @@ export function doSetPartnerCard(gameId, playerId, suitId, rawValue) {
     })
     .then(response => response.data)
     .then(json => dispatch(completeSetPartnerCard(json)))
+  }
+}
+
+function playCard() {
+  return {
+    type: PLAY_CARD,
+  }
+}
+
+function completePlayCard(json) {
+  return {
+    type: COMPLETED_PLAY_CARD,
+    gameState: json.game_state,
+  }
+}
+
+export function doPlayCard(gameId, playerId, suitId, rawValue) {
+  return dispatch => {
+    dispatch(playCard())
+    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    axios({
+      method: 'post',
+      url: '/play/play_card',
+      baseURL: baseUrl(),
+      data: {
+        game_id: gameId,
+        player_id: playerId,
+        suit_id: suitId,
+        raw_value: rawValue,
+      },
+      headers: {
+        'X-CSRF-Token': csrf,
+      },
+    })
+    .then(response => response.data)
+    .then(json => dispatch(completePlayCard(json)))
   }
 }

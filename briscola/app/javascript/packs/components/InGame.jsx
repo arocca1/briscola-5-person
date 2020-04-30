@@ -42,6 +42,7 @@ class InGame extends React.Component {
     this.handlePassBid = this.handlePassBid.bind(this);
     this.handleCardSelect = this.handleCardSelect.bind(this);
     this.handleSetPartnerCard = this.handleSetPartnerCard.bind(this);
+    this.handlePlayCard = this.handlePlayCard.bind(this);
   }
 
   handleBidChange(e) {
@@ -57,11 +58,15 @@ class InGame extends React.Component {
   }
 
   handleCardSelect(suitName, suitId, rawValue, cardName) {
-    this.props.handleCardSelect(suitName, suitId, rawValue, cardName);
+    return (e) => this.props.handleCardSelect(suitName, suitId, rawValue, cardName);
   }
 
   handleSetPartnerCard(e) {
     this.props.handleSetPartnerCard(this.props.gameId, this.props.playerId, this.props.suitId, this.props.rawValue);
+  }
+
+  handlePlayCard(e) {
+    this.props.handlePlayCard(this.props.gameId, this.props.playerId, this.props.suitId, this.props.rawValue);
   }
 
   // set timeout to refetch state every 2 seconds
@@ -97,7 +102,7 @@ class InGame extends React.Component {
     let actionForms;
     if (isItMyTurn(this.props.gameState)) {
       actionForms = (
-        <div>
+        <div key="ActionFormsKey">
           <CurrentPlayerBiddingForm
             gameState={this.props.gameState}
             handleBidChange={this.handleBidChange}
@@ -105,12 +110,13 @@ class InGame extends React.Component {
             handlePassBid={this.handlePassBid}
           />
           <CurrentPlayerSetPartnerCardForm
-            suitName={this.props.suitName}
-            cardName={this.props.cardName}
-            handleSetPartnerCard={this.handleSetPartnerCard}
+            gameState={this.props.gameState}
           />
           <CurrentPlayerCardPlayForm
             gameState={this.props.gameState}
+            suitName={this.props.suitName}
+            cardName={this.props.cardName}
+            handleSetPartnerCard={this.handleSetPartnerCard}
           />
         </div>
       );
@@ -180,6 +186,7 @@ const mapDispatchToProps = dispatch => {
     handlePassBid: (gameId, playerId) => dispatch(doPassBid(gameId, playerId)),
     handleCardSelect: (suitName, suitId, rawValue, cardName) => dispatch(selectCard(suitName, suitId, rawValue, cardName)),
     handleSetPartnerCard: (gameId, playerId, suitId, rawValue) => dispatch(doSetPartnerCard(gameId, playerId, suitId, rawValue)),
+    handlePlayCard: (gameId, playerId, suitId, rawValue) => dispatch(doPlayCard(gameId, playerId, suitId, rawValue)),
   }
 }
 

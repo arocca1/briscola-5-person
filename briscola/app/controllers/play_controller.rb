@@ -3,15 +3,17 @@ require 'game_state'
 
 class PlayController < ApplicationController
   def play_card
-    # check that card wasn't already played
-    player_game_card = PlayerGameCard.find_by(id: params[:player_game_card_id])
+    active_game = ActiveGame.find_by(id: params[:game_id])
+    return render json: "Invalid active game", status: 400 if active_game.nil?
+    player_game_card = active_game.player_game_cards.joins(:card).find_by(card: { suit_id: params[:suit_id], raw_value: params[:raw_value] })
     return render json: "Invalid card", status: 400 if player_game_card.nil?
 
     player = Player.find_by(id: params[:player_id])
     return render json: "Player does not exist" if player.nil?
     return render json: "Player does not have this card" if player_game_card.player_id != player.id
+    # check that card wasn't already played
+    return render json: "Card was already played" if !player_game_card.hand_id.nil?
 
-    active_game = player_game_card.active_game
     # all of the cards have already been played
     if active_game.player_game_cards.where.not(hand_id: nil) == active_game.game.cards_in_deck.count
       return render json: "All of the cards have already been played"

@@ -12,6 +12,7 @@ import {
   SELECT_CARD,
   SET_PARTNER_CARD,
   COMPLETED_SET_PARTNER_CARD,
+  COMPLETED_PLAY_CARD,
 } from './actions'
 
 function actOnActiveGame(state = {}, action) {
@@ -74,6 +75,7 @@ function actOnActiveGame(state = {}, action) {
     case COMPLETED_MAKE_BID:
     case COMPLETED_PASS_BID:
     case COMPLETED_SET_PARTNER_CARD:
+    case COMPLETED_PLAY_CARD:
       return Object.assign({}, state, {
         gameState: action.gameState,
       })
