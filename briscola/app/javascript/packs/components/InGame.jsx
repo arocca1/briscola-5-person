@@ -27,6 +27,31 @@ const TableRect = props => {
 }
 
 class InGame extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {bid: 0};
+
+    this.handleMakeBid = this.handleMakeBid.bind(this);
+    this.handlePassBid = this.handlePassBid.bind(this);
+    this.handleSetPartnerCard = this.handleSetPartnerCard.bind(this);
+  }
+
+  handleMakeBid(event) {
+    this.props.handleMakeBid(this.props.gameId, this.props.playerId, this.state.bid);
+  }
+
+  handleBidChange(event) {
+    this.setState({ bid: event.target.value });
+  }
+
+  handlePassBid(event) {
+    this.props.handleMakeBid(this.props.gameId, this.props.playerId);
+  }
+
+  handleSetPartnerCard(event) {
+    this.props.handleSetPartnerCard(this.props.gameId, this.props.playerId, this.props.suitId, this.props.rawValue);
+  }
+
   // set timeout to refetch state every 2 seconds
   componentDidMount() {
     this.timerID = setInterval(
@@ -65,9 +90,10 @@ class InGame extends React.Component {
               windowWidth={windowWidth}
               windowHeight={windowHeight}
               gameState={this.props.gameState}
-              handleMakeBid={this.props.handleMakeBid}
-              handlePassBid={this.props.handlePassBid}
-              handleSetPartnerCard={this.props.handleSetPartnerCard}
+              handleBidChange={this.handleBidChange}
+              handleMakeBid={this.handleMakeBid}
+              handlePassBid={this.handlePassBid}
+              handleSetPartnerCard={this.handleSetPartnerCard}
             />
           </Layer>
           <Layer key="ScoringLayer">
@@ -84,9 +110,10 @@ class InGame extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { activeGameReducer } = state
-  const { gameState } = activeGameReducer || { gameState: {} }
+  const { gameState, bid } = activeGameReducer || { gameState: {}, bid: 0 }
   return {
     gameState,
+    bid,
     gameId: ownProps.gameId,
     playerId: ownProps.playerId,
   }
