@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Stage, Layer, Rect, Image, Text } from 'react-konva'
 import PlayerInfos from './PlayerInfos'
+import Spinner from 'react-bootstrap/Spinner'
 
 import {
   doFetchGameState,
@@ -66,6 +67,9 @@ class InGame extends React.Component {
   }
 
   render() {
+    if (!this.props.gameState) {
+      return <Spinner animation="border" />;
+    }
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     let text;

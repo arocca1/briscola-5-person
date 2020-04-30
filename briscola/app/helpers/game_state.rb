@@ -21,8 +21,6 @@ module GameState
       state[:requires_bidding] = active_game.game.requires_bidding
       state[:bidding_done] = in_active_play = active_game.bidding_done
       player_bid = player.player_active_game_bids.find_by(active_game_id: active_game.id)
-      state[:my_bid] = player_bid.bid
-      state[:did_i_pass] = player_bid.passed
       # ordered in the same way as the player infos
       state[:player_bids] = active_game.player_active_game_bids.select(:player_id, :bid, :passed)
                                       .order(PlayerActiveGameBid.arel_table[:created_at]).map do |p_bid|
@@ -32,11 +30,9 @@ module GameState
           passed: p_bid.passed,
         }
       end
-      player_max_bid = active_game.max_bidder
-      if !player_max_bid.nil?
-        state[:highest_bid] = player_max_bid.bid
-        state[:highest_bidder] = player_max_bid.player_id.to_s # JavaScript is a butt
-      end
+
+# TODO identify current bidder
+
     end
 
     if in_active_play

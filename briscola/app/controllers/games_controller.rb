@@ -9,13 +9,16 @@ class GamesController < ApplicationController
     # or error if there are already 5 players
     active_game = ActiveGame.find_by(id: params[:game_id])
     return render json: "Unable to join game", status: 400 if active_game.nil?
-    num_players_in_game = active_game.player_active_game_bids.count
-    if active_game.player_active_game_bids.count >= active_game.game.num_players
-      return render json: "Unable to join game because it's already full", status: 400
-    end
     player = Player.find_or_create_by(name: params[:player_name])
-    player_in_game = active_game.player_active_game_bids.find_or_create_by(player_id: player.id)
-    return render json: "Unable to join active game", status: 400 if player_in_game.nil?
+    player_in_game = active_game.player_active_game_bids.find_by(player_id: player.id)
+    num_players_in_game = active_game.player_active_game_bids.count
+    if player_in_game.nil?
+      if active_game.player_active_game_bids.count >= active_game.game.num_players
+        return render json: "Unable to join game because it's already full", status: 400
+      end
+      player_in_game = active_game.player_active_game_bids.create(player_id: player.id)
+      return render json: "Unable to join active game", status: 400 if player_in_game.nil?
+    end
     render json: { player_id: player.id.to_s }, status: 200
   end
 

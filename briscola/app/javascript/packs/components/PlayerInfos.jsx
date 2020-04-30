@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Group, Text, Rect } from 'react-konva'
-import Button from 'react-bootstrap/Button'
+import { Group, Text, Rect, Label } from 'react-konva'
 
 const PlayerName = props => {
   // me
@@ -47,20 +46,42 @@ const PlayerBid = props => {
     x = props.windowWidth * 3 / 20;
     y = 2 * props.windowHeight / 3;
   } // the else case is me
-  return (
-    <Rect
-      x={x}
-      y={x}
-    >
-      <div>
-        <label>Bid amount:
-          <input type="number" onChange={props.handleBidChange} />
-        </label>
-        <Button variant="primary" onClick={props.handleMakeBid}>Make Bid</Button>
-      </div>
-      <div><Button variant="warning" onClick={props.handlePassBid}>Pass</Button></div>
-    </Rect>
-  )
+
+  const bidKey = `${props.gameState.id}BidKey`;
+  const playerBid = props.gameState.player_bids[(props.gameState.my_position + props.relativeToMe) % props.gameState.num_players];
+  let bidGroup = null;
+  if (props.relativeToMe == 0) {
+    // TODO need to figure out how to get inputs to be drawn
+    bidGroup = (
+      <Group
+        key={bidKey}
+        x={x}
+        y={y}
+      >
+        <Text text="Bid amount: " />
+        <Label onClick={props.handleMakeBid}><Text text="Make Bid"/></Label>
+        <Label onClick={props.handlePassBid}><Text text="Pass"/></Label>
+      </Group>
+    )
+  } else {
+    let playerText = "No bid yet";
+    if (playerBid.passed) {
+      playerText = "Passed";
+    } else if (playerBid.bid) {
+      playerText = `Bid Amount: ${playerBid.bid}`;
+    }
+    bidGroup = (
+      <Group
+        key={bidKey}
+        x={x}
+        y={y}
+      >
+        <Text text={playerText} />
+      </Group>
+    )
+  }
+
+  return bidGroup;
 }
 
 PlayerBid.PropTypes = {
@@ -83,7 +104,7 @@ const PlayerInfo = props => {
         windowHeight={props.windowHeight}
         relativeToMe={props.relativeToMe}
         gameState={props.gameState}
-        handleBidChange={this.handleBidChange}
+        handleBidChange={props.handleBidChange}
         handleMakeBid={props.handleMakeBid}
         handlePassBid={props.handlePassBid}
       />
@@ -126,7 +147,7 @@ const PlayerInfos = props => {
           relativeToMe={i}
           name={player.name}
           gameState={props.gameState}
-          handleBidChange={this.handleBidChange}
+          handleBidChange={props.handleBidChange}
           handleMakeBid={props.handleMakeBid}
           handlePassBid={props.handlePassBid}
           handleSetPartnerCard={props.handleSetPartnerCard}
