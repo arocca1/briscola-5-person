@@ -11,10 +11,12 @@ export const JOIN_GAME = "JOIN_GAME";
 export const COMPLETED_JOIN_GAME = "COMPLETED_JOIN_GAME"
 export const FETCH_GAME_STATE = "FETCH_GAME_STATE";
 export const COMPLETED_FETCH_GAME_STATE = "COMPLETED_FETCH_GAME_STATE";
+export const SET_BID = "SET_BID";
 export const MAKE_BID = "MAKE_BID";
 export const COMPLETED_MAKE_BID = "COMPLETED_MAKE_BID";
 export const PASS_BID = "PASS_BID";
 export const COMPLETED_PASS_BID = "COMPLETED_PASS_BID";
+export const SELECT_CARD = "SELECT_CARD";
 export const SET_PARTNER_CARD = "SET_PARTNER_CARD";
 export const COMPLETED_SET_PARTNER_CARD = "COMPLETED_SET_PARTNER_CARD";
 
@@ -161,10 +163,17 @@ export function doFetchGameState(gameId, playerId) {
   }
 }
 
+export function setBid(bid) {
+  return {
+    type: SET_BID,
+    bid,
+  }
+}
+
 function makeBid(bid) {
   return {
     type: MAKE_BID,
-    bid: bid,
+    bid,
   }
 }
 
@@ -229,6 +238,16 @@ export function doPassBid(gameId, playerId) {
     })
     .then(response => response.data)
     .then(json => dispatch(completePassBid(json)))
+  }
+}
+
+export function selectCard(suitName, suitId, rawValue, cardName) {
+  return {
+    type: SELECT_CARD,
+    suitName,
+    suitId,
+    rawValue,
+    cardName,
   }
 }
 

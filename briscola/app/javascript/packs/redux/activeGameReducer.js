@@ -4,10 +4,12 @@ import {
   JOIN_GAME,
   COMPLETED_JOIN_GAME,
   COMPLETED_FETCH_GAME_STATE,
+  SET_BID,
   MAKE_BID,
   COMPLETED_MAKE_BID,
   PASS_BID,
   COMPLETED_PASS_BID,
+  SELECT_CARD,
   SET_PARTNER_CARD,
   COMPLETED_SET_PARTNER_CARD,
 } from './actions'
@@ -45,6 +47,10 @@ function actOnActiveGame(state = {}, action) {
         loadingInProgressGame: false,
         gameState: action.gameState,
       })
+    case SET_BID:
+      return Object.assign({}, state, {
+        bid: action.bid,
+      })
     case MAKE_BID:
       return Object.assign({}, state, {
         bid: action.bid,
@@ -52,6 +58,13 @@ function actOnActiveGame(state = {}, action) {
     case PASS_BID:
       return Object.assign({}, state, {
         passed: true,
+      })
+    case SELECT_CARD:
+      return Object.assign({}, state, {
+        suitName: action.suitName,
+        suitId: action.suitId,
+        rawValue: action.rawValue,
+        cardName: action.cardName,
       })
     case SET_PARTNER_CARD:
       return Object.assign({}, state, {

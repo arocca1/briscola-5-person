@@ -3,17 +3,29 @@ import PropTypes from 'prop-types'
 import { Image } from 'react-konva'
 import useImage from 'use-image';
 
-const PlayerCard = props => {
-  const [image] = useImage(`/${props.suitName}_${props.cardName}.png`);
-  return (
-    <Image
-      image={image}
-      x={props.x}
-      y={props.y}
-      width={60}
-      height={60}
-    />
-  );
+class PlayerCard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleCardSelect = this.handleCardSelect.bind(this);
+  }
+
+  handleCardSelect(e) {
+    this.props.handleCardSelect(this.props.suitName, this.props.suitId, this.props.rawValue, this.props.cardName);
+  }
+
+  render() {
+    const [image] = useImage(`/${this.props.suitName}_${this.props.cardName}.png`);
+    return (
+      <Image
+        image={image}
+        x={this.props.x}
+        y={this.props.y}
+        width={60}
+        height={60}
+        onClick={this.handleCardSelect}
+      />
+    );
+  }
 }
 
 PlayerCard.PropTypes = {

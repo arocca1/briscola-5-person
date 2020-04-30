@@ -1,13 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Button from 'react-bootstrap/Button'
 
-export default class CurrentPlayerSetPartnerCardForm extends React.Component {
-  render() {
-    return <div></div>
-  }
+const CurrentPlayerSetPartnerCardForm = props => {
+  return (
+    <div>
+      <h4>Setting partner card</h4>
+      <div>
+        <label>Set partner card to {`${props.cardName} di ${props.suitName}`}?</label>
+        <Button variant="primary" onClick={props.handleSetPartnerCard}>Do it</Button>
+      </div>
+    </div>
+  );
 }
 
 CurrentPlayerSetPartnerCardForm.PropTypes = {
-  gameState: PropTypes.shape.isRequired,
+  suitName: PropTypes.string.isRequired,
+  cardName: PropTypes.string.isRequired,
   handleSetPartnerCard: PropTypes.func.isRequired,
 }

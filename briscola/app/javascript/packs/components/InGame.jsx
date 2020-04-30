@@ -14,6 +14,8 @@ import {
   doMakeBid,
   doPassBid,
   doSetPartnerCard,
+  setBid,
+  selectCard,
 } from '../redux/actions'
 
 const TableRect = props => {
@@ -34,7 +36,6 @@ const TableRect = props => {
 class InGame extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { bid: 0 };
 
     this.handleBidChange = this.handleBidChange.bind(this);
     this.handleMakeBid = this.handleMakeBid.bind(this);
@@ -43,26 +44,23 @@ class InGame extends React.Component {
     this.handleSetPartnerCard = this.handleSetPartnerCard.bind(this);
   }
 
-  handleMakeBid(e) {
-    e.preventDefault();
-    this.props.handleMakeBid(this.props.gameId, this.props.playerId, this.state.bid);
+  handleBidChange(e) {
+    this.props.handleBidChange(e.target.value);
   }
 
-  handleBidChange(e) {
-    this.setState({ bid: e.target.value });
+  handleMakeBid(e) {
+    this.props.handleMakeBid(this.props.gameId, this.props.playerId, this.props.bid);
   }
 
   handlePassBid(e) {
-    e.preventDefault();
     this.props.handlePassBid(this.props.gameId, this.props.playerId);
   }
 
-  handleCardSelect(e) {
-
+  handleCardSelect(suitName, suitId, rawValue, cardName) {
+    this.props.handleCardSelect(suitName, suitId, rawValue, cardName);
   }
 
   handleSetPartnerCard(e) {
-    e.preventDefault();
     this.props.handleSetPartnerCard(this.props.gameId, this.props.playerId, this.props.suitId, this.props.rawValue);
   }
 
@@ -98,6 +96,7 @@ class InGame extends React.Component {
     }
     let actionForms;
     if (isItMyTurn(this.props.gameState)) {
+      const [selectedCard, setSelectedCard] = useState({});
       actionForms = (
         <div>
           <CurrentPlayerBiddingForm
@@ -107,7 +106,8 @@ class InGame extends React.Component {
             handlePassBid={this.handlePassBid}
           />
           <CurrentPlayerSetPartnerCardForm
-            gameState={this.props.gameState}
+            suitName={selectedCard.suitName}
+            cardName={selectedCard.cardName}
             handleSetPartnerCard={this.handleSetPartnerCard}
           />
           <CurrentPlayerCardPlayForm
@@ -146,10 +146,28 @@ class InGame extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { activeGameReducer } = state
-  const { gameState, bid } = activeGameReducer || { gameState: {}, bid: 0 }
+  const {
+    gameState,
+    bid,
+    suitName,
+    suitId,
+    rawValue,
+    cardName,
+  } = activeGameReducer || {
+    gameState: {},
+    bid: 0,
+    suitName: '',
+    suitId: '',
+    rawValue: 0,
+    cardName: '',
+  }
   return {
     gameState,
     bid,
+    suitName,
+    suitId,
+    rawValue,
+    cardName,
     gameId: ownProps.gameId,
     playerId: ownProps.playerId,
   }
@@ -158,8 +176,10 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchGameState: (gameId, playerId) => dispatch(doFetchGameState(gameId, playerId)),
+    handleBidChange: (bid) => dispatch(setBid(bid)),
     handleMakeBid: (gameId, playerId, bid) => dispatch(doMakeBid(gameId, playerId, bid)),
     handlePassBid: (gameId, playerId) => dispatch(doPassBid(gameId, playerId)),
+    handleCardSelect: (suitName, suitId, rawValue, cardName) => dispatch(selectCard(suitName, suitId, rawValue, cardName)),
     handleSetPartnerCard: (gameId, playerId, suitId, rawValue) => dispatch(doSetPartnerCard(gameId, playerId, suitId, rawValue)),
   }
 }
