@@ -96,7 +96,6 @@ class InGame extends React.Component {
     }
     let actionForms;
     if (isItMyTurn(this.props.gameState)) {
-      const [selectedCard, setSelectedCard] = useState({});
       actionForms = (
         <div>
           <CurrentPlayerBiddingForm
@@ -106,8 +105,8 @@ class InGame extends React.Component {
             handlePassBid={this.handlePassBid}
           />
           <CurrentPlayerSetPartnerCardForm
-            suitName={selectedCard.suitName}
-            cardName={selectedCard.cardName}
+            suitName={this.props.suitName}
+            cardName={this.props.cardName}
             handleSetPartnerCard={this.handleSetPartnerCard}
           />
           <CurrentPlayerCardPlayForm
