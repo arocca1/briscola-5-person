@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Stage, Layer, Rect, Image, Text } from 'react-konva'
+import { Stage, Layer, Rect, Image, Text, Group } from 'react-konva'
 import PlayerInfos from './PlayerInfos'
+import PlayerCard from './PlayerCard'
 import CurrentPlayerBiddingForm from './CurrentPlayerBiddingForm'
 import CurrentPlayerSetPartnerCardForm from './CurrentPlayerSetPartnerCardForm'
 import CurrentPlayerCardPlayForm from './CurrentPlayerCardPlayForm'
@@ -139,6 +140,41 @@ class InGame extends React.Component {
         </div>
       );
     }
+    let currentHandScoreGroup;
+    if (this.props.gameState.current_leader_name && this.props.gameState.current_hand_score) {
+      currentHandScoreGroup = (
+        <Group>
+          <Text x={windowWidth * 13/20} y={5} text="Current hand score" />
+          <Text x={windowWidth * 13/20} y={25} text={ `${this.props.gameState.current_hand_score}, led by ${this.props.gameState.current_leader_name}` } />
+        </Group>
+      )
+    }
+    let maxBidderGroup;
+    if (this.props.gameState.max_bid && this.props.gameState.max_bidder_name) {
+      maxBidderGroup = (
+        <Group>
+          <Text x={windowWidth * 3/4} y={5} text="Maximum bid" />
+          <Text x={windowWidth * 3/4} y={25} text={ `${this.props.gameState.max_bid} by ${this.props.gameState.max_bidder_name}` } />
+        </Group>
+      )
+    }
+    let partnerCardGroup;
+    if (this.props.gameState.partner_card) {
+      partnerCardGroup = (
+        <Group>
+          <Text x={windowWidth * 17/20} y={5} text="Partner Card" />
+          <PlayerCard
+            key="PartnerCardKey"
+            x={windowWidth * 17/20}
+            y={25}
+            suitName={this.props.gameState.partner_card.suit_name}
+            cardName={this.props.gameState.partner_card.card_name}
+            suitId={this.props.gameState.partner_card.suit_id}
+            rawValue={this.props.gameState.partner_card.raw_value}
+          />
+        </Group>
+      );
+    }
     return (
       <div key="InPageDiv">
         <Stage width={windowWidth} height={windowHeight}>
@@ -159,6 +195,9 @@ class InGame extends React.Component {
           <Layer key="PlayedCardsLayer">
           </Layer>
           <Layer key="MiscLayer">
+            { currentHandScoreGroup }
+            { maxBidderGroup }
+            { partnerCardGroup }
           </Layer>
         </Stage>
         { actionForms }

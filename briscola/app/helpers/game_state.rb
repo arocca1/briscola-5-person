@@ -72,8 +72,9 @@ module GameState
           partner_card = active_game.partner_card
           if partner_card
             state[:partner_card] = {
-              id: partner_card.id.to_s,
-              name: partner_card.card.name,
+              suit_name: partner_card.card.suit.name,
+              suit_id: partner_card.card.suit_id,
+              card_name: partner_card.card.name,
               raw_value: partner_card.card.raw_value,
             }
             # we are in active play. bidding is done and there is a partner card
@@ -96,9 +97,15 @@ module GameState
         }
       end
 
+
+# handle the case when all of the cards are played. probably show them until the first card is played in the next hand
+
+
+
       winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.brisola_suit)
       if !winning_card.nil?
         state[:current_leader] = winning_card.player_id.to_s
+        state[:current_leader_name] = winning_card.player.name
         state[:current_hand_score] = score
       end
 

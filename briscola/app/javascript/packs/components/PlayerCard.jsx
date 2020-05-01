@@ -5,6 +5,7 @@ import useImage from 'use-image';
 
 const PlayerCard = props => {
   const [image] = useImage(`/${props.suitName}_${props.cardName}.png`);
+  const onClick = props.handleCardSelect ? props.handleCardSelect(props.suitName, props.suitId, props.rawValue, props.cardName) : null;
   return (
     <Image
       image={image}
@@ -12,7 +13,7 @@ const PlayerCard = props => {
       y={props.y}
       width={60}
       height={60}
-      onClick={props.handleCardSelect(props.suitName, props.suitId, props.rawValue, props.cardName)}
+      onClick={onClick}
     />
   );
 }
