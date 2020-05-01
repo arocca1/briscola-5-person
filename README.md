@@ -4,11 +4,11 @@ The goal of this game is to be able to play 5 person briscola.
 The database, and much of the application, is designed much more generically than just for briscola, but that's the main motivation for the application. As a result, it's the only fully supported game.
 
 ## Design
-This app was built using Ruby 2.7.1, Rails 6.0 and React 16.13.1. It was designed as a single page application.
-The entire game state is fetched every 2 seconds and is then redrawn on the canvas (using react-konva).
+This app was built using Ruby 2.7.1, Rails 6.0 and React 16.13.1. It was designed as a single page application. The entire game state is fetched every 2 seconds and is then redrawn on the canvas (using react-konva).
+
+The database was designed such that any set of cards / card games can be added. Take a look at `db/seed.rb` to see a full example of additions of a few games and card types.
+
 Design:
-- I built it as a single page application
-- Fetches game state every 2 seconds and redraws. Canvas is great
 - The database was designed to handle any number of card types, number of cards, etc
 - the old hand still shows until the next card is played
 A few examples of the app:
