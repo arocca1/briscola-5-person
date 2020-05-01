@@ -118,7 +118,7 @@ module GameState
       state[:current_player_turn] = active_game.current_player_turn.to_s
 
       # if all of the hands have been played, let's show the scores
-      if active_game.player_game_cards.where.not(hand_id: nil) == active_game.game.cards_in_deck.count
+      if active_game.player_game_cards.where.not(hand_id: nil).count == active_game.game.cards_in_deck.count
         my_partners = player.active_game_partners.where(active_game_id: active_game.id).pluck(:partner_id)
         # i am not the max bidder or partner
         if my_partners.empty?
