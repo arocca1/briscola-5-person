@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch'
 import axios from 'axios';
 
-import { baseUrl } from '../util'
+import { baseUrl, getCsrfToken } from '../util'
 
 export const FETCH_GAME_TYPES = "FETCH_GAME_TYPES";
 export const RECEIVE_GAME_TYPES = "RECEIVE_GAME_TYPES";
@@ -71,7 +71,7 @@ function completeCreateGame(json) {
 export function createNewGame(gameName, playerName, gameToCreate) {
   return dispatch => {
     dispatch(createGame(gameName, playerName, gameToCreate))
-    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const csrf = getCsrfToken();
     axios({
       method: 'post',
       url: '/games',
@@ -113,7 +113,7 @@ function completeJoinGame(json) {
 export function doJoinGame(gameId, playerName) {
   return dispatch => {
     dispatch(joinGame(gameId, playerName))
-    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const csrf = getCsrfToken();
     axios({
       method: 'post',
       url: '/games/join',
@@ -188,7 +188,7 @@ function completeMakeBid(json) {
 export function doMakeBid(gameId, playerId, bid) {
   return dispatch => {
     dispatch(makeBid(bid))
-    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const csrf = getCsrfToken();
     axios({
       method: 'post',
       url: '/bids/make_bid',
@@ -224,7 +224,7 @@ function completePassBid(json) {
 export function doPassBid(gameId, playerId) {
   return dispatch => {
     dispatch(passBid())
-    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const csrf = getCsrfToken();
     axios({
       method: 'post',
       url: '/bids/pass_bid',
@@ -284,7 +284,7 @@ function completeSetPartnerCard(json) {
 export function doSetPartnerCard(gameId, playerId, suitId, rawValue) {
   return dispatch => {
     dispatch(setPartnerCard(suitId, rawValue))
-    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const csrf = getCsrfToken();
     axios({
       method: 'post',
       url: '/bids/set_partner_card',
@@ -320,7 +320,7 @@ function completePlayCard(json) {
 export function doPlayCard(gameId, playerId, suitId, rawValue) {
   return dispatch => {
     dispatch(playCard())
-    const csrf = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const csrf = getCsrfToken();
     axios({
       method: 'post',
       url: '/play/play_card',
