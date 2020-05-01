@@ -23,6 +23,62 @@ import {
   doPlayCard,
 } from '../redux/actions'
 
+const FinalScore = props => {
+  if (!props.gameState.my_partners || !props.gameState.bidding_winner_id) {
+    return null;
+  }
+
+  if (props.gameState.requires_bidding) {
+    const myTeamIds = props.gameState.my_partners.concat(props.gameState.id);
+    const amIBiddingTeam = myTeamIds.includes(props.gameState.bidding_winner_id);
+    const myTeam = props.gameState.players.filter(p => myTeamIds.includes(p.id));
+    const otherTeam = props.gameState.players.filter(p => !myTeamIds.includes(p.id));
+    const biddingTeamNames = [];
+    const nonBiddingTeamNames = [];
+    let biddingTeamScore;
+    let nonBiddingTeamScore;
+    if (amIBiddingTeam) {
+      myTeam.forEach(p => biddingTeamNames.push(p.name));
+      otherTeam.forEach(p => nonBiddingTeamNames.push(p.name));
+      biddingTeamScore = props.gameState.my_team_score;
+      nonBiddingTeamScore = props.gameState.other_team_score;
+    } else {
+      myTeam.forEach(p => nonBiddingTeamNames.push(p.name));
+      otherTeam.forEach(p => biddingTeamNames.push(p.name));
+      biddingTeamScore = props.gameState.other_team_score;
+      nonBiddingTeamScore = props.gameState.my_team_score;
+    }
+
+    let result;
+    if (biddingTeamScore === props.gameState.max_bid) {
+      result = "It's a tie!";
+    } else if (biddingTeamScore > props.gameState.max_bid) {
+      result = "Bidding team won!";
+    } else {
+      result = "Bidding team lost!";
+    }
+
+    const resultsX = props.windowWidth * 2 / 5;
+    const resultsStartingY = props.windowHeight * 7 / 30;
+    const yIncrement = 20;
+    return (
+      <Group>
+        <Text x={resultsX} y={resultsStartingY} text="Final Results" />
+        <Text x={resultsX} y={resultsStartingY + yIncrement} text={ `Max bid of ${props.gameState.max_bid} made by ${props.gameState.max_bidder_name}` } />
+        <Text x={resultsX} y={resultsStartingY + yIncrement * 2} text={ `Score for partner team of ${biddingTeamNames.join(", ")}: ${biddingTeamScore}` } />
+        <Text x={resultsX} y={resultsStartingY + yIncrement * 3} text={ `Score for non-partner team of ${nonBiddingTeamNames.join(", ")}: ${nonBiddingTeamScore}` } />
+        <Text x={resultsX} y={resultsStartingY + yIncrement * 4} text={ result } />
+      </Group>
+    );
+  }
+}
+
+FinalScore.PropTypes = {
+  windowWidth: PropTypes.number.isRequired,
+  windowHeight: PropTypes.number.isRequired,
+  gameState: PropTypes.shape.isRequired,
+}
+
 const TableRect = props => {
   const xBorderSize = props.windowWidth / 8;
   const yBorderSize = props.windowHeight / 8;
@@ -180,6 +236,15 @@ class InGame extends React.Component {
     return (
       <div key="InPageDiv">
         <Stage width={windowWidth} height={windowHeight}>
+          <Layer key="MiscLayer">
+            <Group>
+              <Text x={5} y={5} text="Send this link to others so that they can join" />
+              <Text x={5} y={25} text={ `${baseUrl()}/games/${this.props.gameId}` } />
+            </Group>
+            { currentHandScoreGroup }
+            { maxBidderGroup }
+            { partnerCardGroup }
+          </Layer>
           <Layer key="TableLayer">
             <TableRect windowWidth={windowWidth} windowHeight={windowHeight} />
             { message }
@@ -192,8 +257,6 @@ class InGame extends React.Component {
               handleCardSelect={this.handleCardSelect}
             />
           </Layer>
-          <Layer key="ScoringLayer">
-          </Layer>
           <Layer key="PlayedCardsLayer">
             <CardsInPlay
               windowWidth={windowWidth}
@@ -201,14 +264,12 @@ class InGame extends React.Component {
               gameState={this.props.gameState}
             />
           </Layer>
-          <Layer key="MiscLayer">
-            <Group>
-              <Text x={5} y={5} text="Send this link to others so that they can join" />
-              <Text x={5} y={25} text={ `${baseUrl()}/games/${this.props.gameId}` } />
-            </Group>
-            { currentHandScoreGroup }
-            { maxBidderGroup }
-            { partnerCardGroup }
+          <Layer key="ScoringLayer">
+            <FinalScore
+              windowWidth={windowWidth}
+              windowHeight={windowHeight}
+              gameState={this.props.gameState}
+            />
           </Layer>
         </Stage>
         { actionForms }

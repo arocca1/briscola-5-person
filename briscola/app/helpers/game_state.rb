@@ -3,7 +3,8 @@ module GameState
     state = { id: player.id.to_s, game_id: active_game.id.to_s }
 
     # so we can draw them around the table
-    state[:players] = active_game.ordered_players_in_game.map do |pl|
+    players_in_game = active_game.ordered_players_in_game
+    state[:players] = players_in_game.map do |pl|
       {
         id: pl.id.to_s,
         name: pl.name,
@@ -116,8 +117,16 @@ module GameState
 
       state[:current_player_turn] = active_game.current_player_turn.to_s
 
-      if show_score
-        state[:my_team_score] = active_game.hands.where(winner_id: player.partners.pluck(:partner_id) + [player.id]).sum(:score)
+      # if all of the hands have been played, let's show the scores
+      if active_game.player_game_cards.where.not(hand_id: nil)
+        my_partners = player.active_game_partners.where(active_game_id: active_game.id).pluck(:partner_id)
+        # i am not the max bidder or partner
+        if my_partners.empty?
+          my_partners = players_in_game.map(&:id) - active_game.active_game_partners.pluck(:player_id)
+        end
+        state[:my_partners] = my_partners.map(&:to_s)
+        state[:my_team_score] = active_game.hands.where(winner_id: my_partners + [player.id]).sum(:score)
+        state[:other_team_score] = active_game.hands.where.not(winner_id: my_partners + [player.id]).sum(:score)
       end
     end
 
