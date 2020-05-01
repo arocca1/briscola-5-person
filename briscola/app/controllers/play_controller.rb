@@ -21,13 +21,14 @@ class PlayController < ApplicationController
 
     return render json: "You can't play yet. It's not your turn" if active_game.current_player_turn != player.id
 
+    # this was designed this way so that the old hand still shows until the next card is played
     curr_hand = active_game.current_hand
     num_cards_in_current_hand = curr_hand.player_game_cards.count
     # the current hand has the maximum number of cards played
     if num_cards_in_current_hand == active_game.game.num_players
       # TODO add in a transaction
       # need to create new hand
-      hand = active_game.hands.create(number: active_games.hands.maximum(:number) + 1)
+      hand = active_game.hands.create(number: active_game.hands.maximum(:number) + 1)
       return render json: "Unable to create next hand", status: 400 if hand.nil?
       # play the card in the hand
       return render json: "Unable to play card", status: 400 if !player_game_card.update(hand_id: hand.id)
@@ -36,9 +37,10 @@ class PlayController < ApplicationController
     # the current hand still have more cards to be played
     # TODO wrap in transaction
     return render json: "Unable to play card", status: 400 if !player_game_card.update(hand_id: curr_hand.id)
+
     # did playing this card finish the hand? we need to compute the score
     if (num_cards_in_current_hand + 1) == active_game.game.num_players
-      winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.brisola_suit)
+      winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.briscola_suit)
       # update the hand with the score and winner
       return render json: "Unable to calculate score" if !curr_hand.update(winner_id: winning_card.player_id, score: score)
 

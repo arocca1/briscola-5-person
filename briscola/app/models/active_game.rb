@@ -28,6 +28,10 @@ class ActiveGame < ApplicationRecord
     self.player_game_cards.includes(:card).joins(:hand).where("hands.number = (#{self.hands.select('MAX(number)').to_sql})")
   end
 
+  def cards_by_hand(hand_number)
+    self.player_game_cards.includes(:card).joins(:hand).where(Hand.arel_table[:number].eq(hand_number))
+  end
+
   def players_in_game
     Player.joins(:player_active_game_bids).where(player_active_game_bids: { active_game_id: self.id })
   end
@@ -98,6 +102,7 @@ class ActiveGame < ApplicationRecord
     # many positions from the second person to join
     prev_winner_id = curr_hand.number == 1 ? self.max_bidder.player_id : self.previous_hand.winner_id
     prev_winner_idx = player_ids.index(prev_winner_id)
+    #debugger
     player_ids[(prev_winner_idx + cards_played_in_current_hand) % self.game.num_players]
   end
 end

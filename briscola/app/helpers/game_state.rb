@@ -85,10 +85,19 @@ module GameState
     end
 
     if in_active_play
+      current_hand = active_game.current_hand
       cards_in_current_hand = active_game.cards_in_current_hand.order(:updated_at)
+      cards_to_render = cards_in_current_hand
+      # if no cards are yet to be played in the current hand, let's show the previous
+      # hand. This is also a really nice way to show the results of the previous
+      # hand. Otherwise, they would just disappear on the last card play
+      if current_hand.number != 1 && cards_in_current_hand.count == 0
+        cards_to_render = active_game.cards_by_hand(current_hand.number - 1).order(:updated_at)
+      end
+
       # ordering of card playing matters
       # updated_at will be set when we set the hand_id
-      state[:cards_in_current_hand] = cards_in_current_hand.map do |pl_card|
+      state[:cards_in_current_hand] = cards_to_render.map do |pl_card|
         {
           player_id: pl_card.player_id.to_s,
           suit_name: pl_card.card.suit.name,
@@ -98,12 +107,7 @@ module GameState
         }
       end
 
-
-# handle the case when all of the cards are played. probably show them until the first card is played in the next hand
-
-
-
-      winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.briscola_suit)
+      winning_card, score = BriscolaHandWinnerComputer.calculate_winner(cards_to_render, active_game.briscola_suit)
       if !winning_card.nil?
         state[:current_leader] = winning_card.player_id.to_s
         state[:current_leader_name] = winning_card.player.name

@@ -9,7 +9,7 @@ import CurrentPlayerBiddingForm from './CurrentPlayerBiddingForm'
 import CurrentPlayerSetPartnerCardForm from './CurrentPlayerSetPartnerCardForm'
 import CurrentPlayerCardPlayForm from './CurrentPlayerCardPlayForm'
 import Spinner from 'react-bootstrap/Spinner'
-import { isItMyTurn } from '../util'
+import { isItMyTurn, baseUrl } from '../util'
 
 import {
   doFetchGameState,
@@ -142,11 +142,12 @@ class InGame extends React.Component {
       );
     }
     let currentHandScoreGroup;
-    if (this.props.gameState.current_leader_name && this.props.gameState.current_hand_score) {
+    if (this.props.gameState.current_leader_name) {
+      const wonHand = this.props.gameState.cards_in_current_hand.length === this.props.gameState.num_required_players;
       currentHandScoreGroup = (
         <Group>
           <Text x={windowWidth * 13/20} y={5} text="Current hand score" />
-          <Text x={windowWidth * 13/20} y={25} text={ `${this.props.gameState.current_hand_score}, led by ${this.props.gameState.current_leader_name}` } />
+          <Text x={windowWidth * 13/20} y={25} text={ `${this.props.gameState.current_hand_score}, ${wonHand ? "won" : "led"} by ${this.props.gameState.current_leader_name}` } />
         </Group>
       )
     }
@@ -201,6 +202,10 @@ class InGame extends React.Component {
             />
           </Layer>
           <Layer key="MiscLayer">
+            <Group>
+              <Text x={5} y={5} text="Send this link to others so that they can join" />
+              <Text x={5} y={25} text={ `${baseUrl()}/games/${this.props.gameId}` } />
+            </Group>
             { currentHandScoreGroup }
             { maxBidderGroup }
             { partnerCardGroup }
