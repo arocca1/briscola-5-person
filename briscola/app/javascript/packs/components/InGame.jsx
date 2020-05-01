@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Stage, Layer, Rect, Image, Text, Group } from 'react-konva'
 import PlayerInfos from './PlayerInfos'
 import PlayerCard from './PlayerCard'
+import CardsInPlay from './CardsInPlay'
 import CurrentPlayerBiddingForm from './CurrentPlayerBiddingForm'
 import CurrentPlayerSetPartnerCardForm from './CurrentPlayerSetPartnerCardForm'
 import CurrentPlayerCardPlayForm from './CurrentPlayerCardPlayForm'
@@ -193,6 +194,11 @@ class InGame extends React.Component {
           <Layer key="ScoringLayer">
           </Layer>
           <Layer key="PlayedCardsLayer">
+            <CardsInPlay
+              windowWidth={windowWidth}
+              windowHeight={windowHeight}
+              gameState={this.props.gameState}
+            />
           </Layer>
           <Layer key="MiscLayer">
             { currentHandScoreGroup }

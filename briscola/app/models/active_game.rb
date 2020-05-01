@@ -36,8 +36,8 @@ class ActiveGame < ApplicationRecord
     Player.joins(:player_active_game_bids).where(player_active_game_bids: { active_game_id: self.id }).order(PlayerActiveGameBid.arel_table[:created_at])
   end
 
-  def brisola_suit
-    self.player_game_cards.where(player_game_cards: { is_partner_card: true }).joins(:card).pluck('cards.id').first
+  def briscola_suit
+    self.player_game_cards.where(player_game_cards: { is_partner_card: true }).joins(:card).pluck(:suit_id).first
   end
 
   def partner_card

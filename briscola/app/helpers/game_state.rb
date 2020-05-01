@@ -90,9 +90,10 @@ module GameState
       # updated_at will be set when we set the hand_id
       state[:cards_in_current_hand] = cards_in_current_hand.map do |pl_card|
         {
-          id: pl_card.id.to_s,
           player_id: pl_card.player_id.to_s,
-          name: pl_card.card.name,
+          suit_name: pl_card.card.suit.name,
+          suit_id: pl_card.card.suit_id,
+          card_name: pl_card.card.name,
           raw_value: pl_card.card.raw_value,
         }
       end
@@ -102,7 +103,7 @@ module GameState
 
 
 
-      winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.brisola_suit)
+      winning_card, score = BriscolaHandWinnerComputer.calculate_winner(active_game.cards_in_current_hand.order(:updated_at), active_game.briscola_suit)
       if !winning_card.nil?
         state[:current_leader] = winning_card.player_id.to_s
         state[:current_leader_name] = winning_card.player.name

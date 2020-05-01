@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Group, Text, Star } from 'react-konva'
+import { Group, Text, Circle } from 'react-konva'
 import { isItPlayerTurn } from '../util'
 import PlayerCard from './PlayerCard'
 
@@ -87,13 +87,11 @@ const PlayerTurn = props => {
 
   if (isItPlayerTurn(props.gameState, props.relativeToMe)) {
     return (
-      <Star
+      <Circle
         x={x}
         y={y}
         fill="#89b717"
-        numPoints={5}
-        innerRadius={10}
-        outerRadius={20}
+        radius={20}
       />
     );
   }
