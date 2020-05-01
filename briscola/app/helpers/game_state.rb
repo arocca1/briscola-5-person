@@ -73,9 +73,9 @@ module GameState
           partner_card = active_game.partner_card
           if partner_card
             state[:partner_card] = {
-              suit_name: partner_card.card.suit.name,
+              suit_name: partner_card.card.suit.name.downcase,
               suit_id: partner_card.card.suit_id,
-              card_name: partner_card.card.name,
+              card_name: partner_card.card.name.downcase,
               raw_value: partner_card.card.raw_value,
             }
             # we are in active play. bidding is done and there is a partner card
@@ -101,9 +101,9 @@ module GameState
       state[:cards_in_current_hand] = cards_to_render.map do |pl_card|
         {
           player_id: pl_card.player_id.to_s,
-          suit_name: pl_card.card.suit.name,
+          suit_name: pl_card.card.suit.name.downcase,
           suit_id: pl_card.card.suit_id,
-          card_name: pl_card.card.name,
+          card_name: pl_card.card.name.downcase,
           raw_value: pl_card.card.raw_value,
         }
       end
