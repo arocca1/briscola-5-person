@@ -6,12 +6,15 @@ The database, and much of the application, is designed much more generically tha
 ## Design
 This app was built using Ruby 2.7.1, Rails 6.0 and React 16.13.1 backed by Redux 7.2. It was designed as a single page application. The entire game state is fetched every 2 seconds and is then redrawn on the canvas (using react-konva).
 
-The database was designed such that any set of cards / card games can be added. Take a look at `db/seed.rb` to see a full example of additions of a few games and card types.
+The database was designed such that any set of cards / card games can be added. Take a look at `db/seed.rb` to see a full example of additions of a few games and card types. The basic premise is that each card belongs to a suit, which belongs to a card type (say Italian cards). There may be a set of games, like Briscola, that belong to a card type. Within a game, a card may have a certain value. For example, in Briscola, all aces (asso) have the value of 11 points. This information is captured in the game_value_point table.
 
+An active_game is simply an instance of said game type. A player_active_game_bid is really a player's entry into a game with their corresponding bid information. A player_game_card is the existence of a card in an active game.
+
+### Game Flow
 Players can slowly join a game. The players are drawn around the table evenly spread out with your player being at the bottom of the screen:
 ![waiting for join](waiting&#32;for&#32;join.png)
 
-Once all of the players have joined, it's bidding time. A little green circle will appear near the name of the player whose turn it is (also true during game play)
+Once all of the players have joined, it's bidding time. All of the cards will have been dealt out and your cards will be drawn above your name. A little green circle will appear near the name of the player whose turn it is (also true during game play)
 ![bidding](bidding.png)
 
 Once bidding has completed, the highest bidder must then choose their partner card (or corresponding briscola suit). The highest bidder (and their bid) along with the partner card are always drawn in the top right corner of the page. This is important since the partner card also defines the briscola suit.
