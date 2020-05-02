@@ -162,7 +162,7 @@ https://certbot.eff.org/instructions
 
 ## Potential Improvements
 ### Technical Improvements
-- Add tests everywhere. There are no tests which is sad
+- Add tests everywhere. There are no tests which is sad. And in a related sense, add more error handling and logging
 - Refactor the backend endpoints to be more efficient. My desire with the first pass implementation was to get the application working (I also just wanted to play the game)
 - Refactor most of the React code. There are some icky things that are done like passing the full game state around instead of the specific desired pieces.
 - Implement use of JSLint and Rubocop
