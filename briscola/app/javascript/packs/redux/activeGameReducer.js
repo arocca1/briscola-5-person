@@ -15,6 +15,7 @@ import {
   SET_PARTNER_CARD,
   COMPLETED_SET_PARTNER_CARD,
   COMPLETED_PLAY_CARD,
+  COMPLETED_CREATE_AND_JOIN_NEW_GAME,
 } from './actions'
 
 function actOnActiveGame(state = {}, action) {
@@ -85,8 +86,21 @@ function actOnActiveGame(state = {}, action) {
     case COMPLETED_MAKE_BID:
     case COMPLETED_PASS_BID:
     case COMPLETED_SET_PARTNER_CARD:
+      return Object.assign({}, state, {
+        gameState: action.gameState,
+      })
     case COMPLETED_PLAY_CARD:
       return Object.assign({}, state, {
+        gameState: action.gameState,
+        suitName: null,
+        suitId: null,
+        rawValue: null,
+        cardName: null,
+      })
+    case COMPLETED_CREATE_AND_JOIN_NEW_GAME:
+      return Object.assign({}, state, {
+        gameId: action.gameId,
+        playerId: action.playerId,
         gameState: action.gameState,
       })
     default:

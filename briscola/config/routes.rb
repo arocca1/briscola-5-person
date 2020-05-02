@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       get 'show_json'
       post 'join'
       get 'get_supported_games'
+      post 'create_new_and_join'
     end
   end
 

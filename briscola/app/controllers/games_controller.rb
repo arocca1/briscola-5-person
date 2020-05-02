@@ -60,4 +60,22 @@ class GamesController < ApplicationController
   def get_supported_games
     render json: Game.all.map { |g| { id: g.id.to_s, name: g.name } }
   end
+
+  def create_new_and_join
+    previous_active_game = ActiveGame.find_by(id: params[:game_id])
+    return render json: "Invalid game", status: 400 if previous_active_game.nil?
+    player = Player.find_by(id: params[:player_id])
+    return render json: "Invalid player", status: 400 if player.nil?
+    return render json: "Player was not in game", status: 400 if !previous_active_game.player_active_game_bids.where(player_id: player.id).exists?
+
+    active_game = ActiveGame.new(game_id: previous_active_game.game_id, name: "#{previous_active_game}+")
+    return render json: "Unable to start game", status: 400 if !active_game.save
+    previous_active_game.player_active_game_bids.pluck(:player_id).each do |player_id|
+      player_in_game = active_game.player_active_game_bids.new(player_id: player_id)
+      return render json: "Unable to join active game", status: 400 if !player_in_game.save
+    end
+    return render json: "Unable to deal cards", status: 500 if !active_game.deal_cards
+
+    render json: { game_id: active_game.id.to_s, player_id: player.id.to_s, game_state: GameState.get_player_state(player: player, active_game: active_game) }
+  end
 end

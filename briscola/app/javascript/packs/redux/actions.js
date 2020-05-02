@@ -23,6 +23,8 @@ export const SET_PARTNER_CARD = "SET_PARTNER_CARD";
 export const COMPLETED_SET_PARTNER_CARD = "COMPLETED_SET_PARTNER_CARD";
 export const PLAY_CARD = "PLAY_CARD";
 export const COMPLETED_PLAY_CARD = "COMPLETED_PLAY_CARD";
+export const CREATE_AND_JOIN_NEW_GAME = "CREATE_AND_JOIN_NEW_GAME";
+export const COMPLETED_CREATE_AND_JOIN_NEW_GAME = "COMPLETED_CREATE_AND_JOIN_NEW_GAME";
 
 function requestGameTypes() {
   return {
@@ -313,6 +315,10 @@ function playCard() {
 function completePlayCard(json) {
   return {
     type: COMPLETED_PLAY_CARD,
+    suitName: null,
+    suitId: null,
+    rawValue: null,
+    cardName: null,
     gameState: json.game_state,
   }
 }
@@ -337,5 +343,41 @@ export function doPlayCard(gameId, playerId, suitId, rawValue) {
     })
     .then(response => response.data)
     .then(json => dispatch(completePlayCard(json)))
+  }
+}
+
+function createAndJoinNewGame() {
+  return {
+    type: CREATE_AND_JOIN_NEW_GAME,
+  }
+}
+
+function completeCreateAndJoinNewGame(json) {
+  return {
+    type: COMPLETED_CREATE_AND_JOIN_NEW_GAME,
+    gameId: json.game_id,
+    playerId: json.player_id,
+    gameState: json.game_state,
+  }
+}
+
+export function doCreateAndJoinNewGame(gameId, playerId) {
+  return dispatch => {
+    dispatch(createAndJoinNewGame());
+    const csrf = getCsrfToken();
+    axios({
+      method: 'post',
+      url: '/games/create_new_and_join',
+      baseURL: baseUrl(),
+      data: {
+        game_id: gameId,
+        player_id: playerId,
+      },
+      headers: {
+        'X-CSRF-Token': csrf,
+      },
+    })
+    .then(response => response.data)
+    .then(json => dispatch(completeCreateAndJoinNewGame(json)))
   }
 }

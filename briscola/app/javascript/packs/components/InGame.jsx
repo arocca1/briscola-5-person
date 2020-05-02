@@ -9,6 +9,7 @@ import CurrentPlayerBiddingForm from './CurrentPlayerBiddingForm'
 import CurrentPlayerSetPartnerCardForm from './CurrentPlayerSetPartnerCardForm'
 import CurrentPlayerCardPlayForm from './CurrentPlayerCardPlayForm'
 import Spinner from 'react-bootstrap/Spinner'
+import Button from 'react-bootstrap/Button'
 import { isItMyTurn, baseUrl } from '../util'
 
 import {
@@ -21,6 +22,7 @@ import {
   setPartnerSuit,
   setPartnerCardRawValue,
   doPlayCard,
+  doCreateAndJoinNewGame,
 } from '../redux/actions'
 
 const FinalScore = props => {
@@ -106,6 +108,7 @@ class InGame extends React.Component {
     this.handleSetPartnerCardRawValue = this.handleSetPartnerCardRawValue.bind(this);
     this.handleSetPartnerCard = this.handleSetPartnerCard.bind(this);
     this.handlePlayCard = this.handlePlayCard.bind(this);
+    this.handleCreateAndJoinNewGame = this.handleCreateAndJoinNewGame.bind(this);
   }
 
   handleBidChange(e) {
@@ -138,6 +141,10 @@ class InGame extends React.Component {
 
   handlePlayCard(e) {
     this.props.handlePlayCard(this.props.gameId, this.props.playerId, this.props.suitId, this.props.rawValue);
+  }
+
+  handleCreateAndJoinNewGame(e) {
+    this.props.handleCreateAndJoinNewGame(this.props.gameId, this.props.playerId);
   }
 
   // set timeout to refetch state every 2 seconds
@@ -233,6 +240,11 @@ class InGame extends React.Component {
         </Group>
       );
     }
+    let createNewGame;
+    // we're at the end of the game
+    if (this.props.gameState.my_partners) {
+      createNewGame = <Button variant="primary" onClick={this.handleCreateAndJoinNewGame}>Create new game with same players?</Button>;
+    }
     return (
       <div key="InPageDiv">
         <Stage width={windowWidth} height={windowHeight}>
@@ -273,6 +285,7 @@ class InGame extends React.Component {
           </Layer>
         </Stage>
         { actionForms }
+        { createNewGame }
       </div>
     )
   }
@@ -281,6 +294,8 @@ class InGame extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   const { activeGameReducer } = state
   const {
+    gameId,
+    playerId,
     gameState,
     bid,
     suitName,
@@ -300,6 +315,8 @@ const mapStateToProps = (state, ownProps) => {
     partnerCardRawValue: '',
   }
   return {
+    gameId,
+    playerId,
     gameState,
     bid,
     suitName,
@@ -308,8 +325,8 @@ const mapStateToProps = (state, ownProps) => {
     cardName,
     partnerCardSuitId,
     partnerCardRawValue,
-    gameId: ownProps.gameId,
-    playerId: ownProps.playerId,
+    gameId: gameId || ownProps.gameId,
+    playerId: playerId || ownProps.playerId,
   }
 }
 
@@ -324,6 +341,7 @@ const mapDispatchToProps = dispatch => {
     handleSetPartnerCardRawValue: (rawValue) => dispatch(setPartnerCardRawValue(rawValue)),
     handleSetPartnerCard: (gameId, playerId, suitId, rawValue) => dispatch(doSetPartnerCard(gameId, playerId, suitId, rawValue)),
     handlePlayCard: (gameId, playerId, suitId, rawValue) => dispatch(doPlayCard(gameId, playerId, suitId, rawValue)),
+    handleCreateAndJoinNewGame: (gameId, playerId) => dispatch(doCreateAndJoinNewGame(gameId, playerId)),
   }
 }
 
