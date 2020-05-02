@@ -26,31 +26,21 @@ import {
 } from '../redux/actions'
 
 const FinalScore = props => {
-  if (!props.gameState.my_partners || !props.gameState.bidding_winner_id) {
+  if (!props.gameState.game_complete) {
     return null;
   }
 
   if (props.gameState.requires_bidding) {
-    const myTeamIds = props.gameState.my_partners.concat(props.gameState.id);
-    const amIBiddingTeam = myTeamIds.includes(props.gameState.bidding_winner_id);
-    const myTeam = props.gameState.players.filter(p => myTeamIds.includes(p.id));
-    const otherTeam = props.gameState.players.filter(p => !myTeamIds.includes(p.id));
-    const biddingTeamNames = [];
-    const nonBiddingTeamNames = [];
-    let biddingTeamScore;
-    let nonBiddingTeamScore;
-    if (amIBiddingTeam) {
-      myTeam.forEach(p => biddingTeamNames.push(p.name));
-      otherTeam.forEach(p => nonBiddingTeamNames.push(p.name));
-      biddingTeamScore = props.gameState.my_team_score;
-      nonBiddingTeamScore = props.gameState.other_team_score;
-    } else {
-      myTeam.forEach(p => nonBiddingTeamNames.push(p.name));
-      otherTeam.forEach(p => biddingTeamNames.push(p.name));
-      biddingTeamScore = props.gameState.other_team_score;
-      nonBiddingTeamScore = props.gameState.my_team_score;
-    }
-
+    // there is no standard JavaScript partition function???
+    const [biddingTeamNames, nonBiddingTeamNames] = props.gameState.players.reduce((acc, player) => {
+      if (player.on_bidding_team) {
+        return [acc[0].concat(player.name), acc[1]];
+      } else {
+        return [acc[0], acc[1].concat(player.name)];
+      }
+      return fn(el, i, arr) ? acc[0].push(el) : acc[1].push(el), acc;
+    }, [[],[]]);
+    const biddingTeamScore = props.gameState.bidding_team_score;
     let result;
     if (biddingTeamScore === props.gameState.max_bid) {
       result = "It's a tie!";
@@ -68,7 +58,7 @@ const FinalScore = props => {
         <Text x={resultsX} y={resultsStartingY} text="Final Results" />
         <Text x={resultsX} y={resultsStartingY + yIncrement} text={ `Max bid of ${props.gameState.max_bid} made by ${props.gameState.max_bidder_name}` } />
         <Text x={resultsX} y={resultsStartingY + yIncrement * 2} text={ `Score for partner team of ${biddingTeamNames.join(", ")}: ${biddingTeamScore}` } />
-        <Text x={resultsX} y={resultsStartingY + yIncrement * 3} text={ `Score for non-partner team of ${nonBiddingTeamNames.join(", ")}: ${nonBiddingTeamScore}` } />
+        <Text x={resultsX} y={resultsStartingY + yIncrement * 3} text={ `Score for non-partner team of ${nonBiddingTeamNames.join(", ")}: ${props.gameState.other_team_score}` } />
         <Text x={resultsX} y={resultsStartingY + yIncrement * 4} text={ result } />
       </Group>
     );

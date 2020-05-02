@@ -116,14 +116,28 @@ module GameState
 
       # if all of the hands have been played, let's show the scores
       if active_game.player_game_cards.where.not(hand_id: nil).count == active_game.game.cards_in_deck.count
+        state[:game_complete] = true
         my_partners = player.active_game_partners.where(active_game_id: active_game.id).pluck(:partner_id)
-        # i am not the max bidder or partner
+        im_on_bidding_team = true
+        # i am not the max bidder or partner; only they will have partner entries
         if my_partners.empty?
           my_partners = players_in_game.map(&:id) - active_game.active_game_partners.pluck(:player_id)
+          im_on_bidding_team = false
         end
-        state[:my_partners] = my_partners.map(&:to_s)
-        state[:my_team_score] = active_game.hands.where(winner_id: my_partners + [player.id]).sum(:score)
-        state[:other_team_score] = active_game.hands.where.not(winner_id: my_partners + [player.id]).sum(:score)
+        my_team_ids = my_partners + [player.id]
+        my_team_score = active_game.hands.where(winner_id: my_team_ids).sum(:score)
+        other_team_score = active_game.hands.where.not(winner_id: my_team_ids).sum(:score)
+        if state[:requires_bidding]
+          state[:bidding_team_score] = im_on_bidding_team ? my_team_score : other_team_score
+          state[:other_team_score] = im_on_bidding_team ? other_team_score : my_team_score
+          my_team_string_ids = my_team_ids.map(&:to_s)
+          state[:players].each do |p|
+            p[:on_bidding_team] = !im_on_bidding_team || (my_team_string_ids.include?(p[:id]) && im_on_bidding_team)
+          end
+        else
+          state[:my_team_score] = my_team_score
+          state[:other_team_score] = other_team_score
+        end
       end
     end
 
