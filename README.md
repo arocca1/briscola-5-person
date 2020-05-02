@@ -4,18 +4,27 @@ The goal of this game is to be able to play 5 person briscola.
 The database, and much of the application, is designed much more generically than just for briscola, but that's the main motivation for the application. As a result, it's the only fully supported game.
 
 ## Design
-This app was built using Ruby 2.7.1, Rails 6.0 and React 16.13.1. It was designed as a single page application. The entire game state is fetched every 2 seconds and is then redrawn on the canvas (using react-konva).
+This app was built using Ruby 2.7.1, Rails 6.0 and React 16.13.1 backed by Redux 7.2. It was designed as a single page application. The entire game state is fetched every 2 seconds and is then redrawn on the canvas (using react-konva).
 
 The database was designed such that any set of cards / card games can be added. Take a look at `db/seed.rb` to see a full example of additions of a few games and card types.
 
-Design:
-- The database was designed to handle any number of card types, number of cards, etc
-- the old hand still shows until the next card is played
-A few examples of the app:
+Players can slowly join a game. The players are drawn around the table evenly spread out with your player being at the bottom of the screen:
+![waiting for join](waiting&#32;for&#32;join.png)
 
+Once all of the players have joined, it's bidding time. A little green circle will appear near the name of the player whose turn it is (also true during game play)
+![bidding](bidding.png)
+
+Once bidding has completed, the highest bidder must then choose their partner card (or corresponding briscola suit). The highest bidder (and their bid) along with the partner card are always drawn in the top right corner of the page. This is important since the partner card also defines the briscola suit.
+![pick partner card](pick&#32;partner&#32;card.png)
+
+Each player then picks a card by clicking on the card and then confirming the choice. The card itself will be drawn on the table to the side or above its corresponding player. The card that is currently winning the hand will also have a star drawn beside it. The current score of the hand and leader of it are drawn in the top right of the page as well.
+![2 cards played](2&#32;cards&#32;played.png)
+
+Once each player has played a card, the hand is complete. All of the cards still remain on the table until the first card of the next hand is played. This way we can ensure that all players were able to see the result of the previous hand.
 ![full hand](full&#32;hand.png)
 
-![2 cards played](2&#32;cards&#32;played.png)
+At the end of the game, the results are shown in the middle of the table.
+![game end](game&#32;end.png)
 
 ## Running the code
 1. Clone the repo
