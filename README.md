@@ -26,8 +26,8 @@ Each player then picks a card by clicking on the card and then confirming the ch
 Once each player has played a card, the hand is complete. All of the cards still remain on the table until the first card of the next hand is played. This way we can ensure that all players were able to see the result of the previous hand.
 ![full hand](full&#32;hand.png)
 
-At the end of the game, the results are shown in the middle of the table.
-![game end](game&#32;end.png)
+At the end of the game, the results are shown in the middle of the table. Also, you can create a new game with all of the same players. You will end up in the next game with all of your cards already dealt.
+![end create new game](end&#32;create&#32;new&#32;game.png)
 
 ## Running the code
 1. Clone the repo
@@ -173,6 +173,5 @@ https://certbot.eff.org/instructions
 - Make the UI not hideous
 - Handle more games than just 5-person briscola
 - Authentication and real user accounts. Right now it's simply "authentication" by name
-- Add in a way to start a new game after the previous one has finished
 - Filter out cards that are in your hand from the partner card selector. This is a small enhancement since selecting a card from your hand will error out, but avoiding that woud be desirable
 - Use cookies to store user id instead of having to rejoin game by name
