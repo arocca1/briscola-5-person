@@ -12,7 +12,7 @@ module GameState
     end
     state[:my_position] = state[:players].index { |p| p[:id] == player.id.to_s }
     state[:num_required_players] = active_game.game.num_players
-    state[:all_players_joined] = state[:players].length == active_game.game.num_players
+    state[:all_players_joined] = state[:players].length == state[:num_required_players]
 
     state[:my_cards] = player.unplayed_cards(active_game.id).map do |pl_card|
       {
@@ -27,13 +27,13 @@ module GameState
 
     state[:suits] = Suit.joins(card_type: { games: :active_games })
                         .where(active_games: { id: active_game.id })
+                        .distinct
                         .pluck(:id, :name)
-                        .uniq
                         .map { |s| { id: s[0].to_s, name: s[1] } }
     state[:raw_values] = Card.joins({ suit: { card_type: { games: :active_games }}})
                              .where(active_games: { id: active_game.id })
+                             .distinct
                              .pluck(:raw_value, :name)
-                             .uniq
                              .map { |r| { raw_value: r[0], name: r[1] } }
 
     # if the game requires bidding and we haven't done it yet, then we shouldn't
@@ -62,14 +62,9 @@ module GameState
           state[:max_bid] = max_bidder.bid
           state[:max_bidder_name] = max_bidder.player.name
         end
-        if active_game.player_active_game_bids.where(passed: true).count == state[:num_required_players] - 1
-          state[:bidding_winner_id] = max_bidder.player_id.to_s
-        # there hasn't been any bidding yet
-        else
-          state[:current_bidder_id] = active_game.current_bidder.player_id.to_s
-        end
 
         if state[:bidding_done]
+          state[:bidding_winner_id] = max_bidder.player_id.to_s
           partner_card = active_game.partner_card
           if partner_card
             state[:partner_card] = {
@@ -81,6 +76,8 @@ module GameState
             # we are in active play. bidding is done and there is a partner card
             in_active_play = true
           end
+        else
+          state[:current_bidder_id] = active_game.current_bidder.player_id.to_s
         end
       end
     end
