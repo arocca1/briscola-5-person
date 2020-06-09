@@ -132,7 +132,7 @@ module GameState
           state[:other_team_score] = im_on_bidding_team ? other_team_score : my_team_score
           my_team_string_ids = my_team_ids.map(&:to_s)
           state[:players].each do |p|
-            p[:on_bidding_team] = !im_on_bidding_team || (my_team_string_ids.include?(p[:id]) && im_on_bidding_team)
+            p[:on_bidding_team] = (!im_on_bidding_team && !my_team_string_ids.include?(p[:id])) || (my_team_string_ids.include?(p[:id]) && im_on_bidding_team)
           end
         else
           state[:my_team_score] = my_team_score
