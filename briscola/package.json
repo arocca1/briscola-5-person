@@ -10,7 +10,7 @@
     "axios": "^0.19.2",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bootstrap": "^4.4.1",
-    "cross-fetch": "^3.0.4",
+    "cross-fetch": "^3.1.5",
     "konva": "^5.0.2",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
